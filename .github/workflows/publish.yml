@@ -1,10 +1,8 @@
 name: Publish Package to npmjs
 on:
-  # release:
-  #   types: [created]
   push:
-    branches:
-      - main
+    branches: [main]
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,16 +10,16 @@ jobs:
       matrix:
         node-version: [10.x, 12.x, 14.x, 16.x]
 
-  steps:
-    - uses: actions/checkout@main
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Install dependencies
-      run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
     # - run: npm publish
     # env:
     #   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
