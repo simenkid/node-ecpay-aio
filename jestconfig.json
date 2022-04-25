@@ -4,11 +4,12 @@
   },
   "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
   "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+  "testPathIgnorePatterns": ["src/__tests__/test_setting.ts"],
   "collectCoverage": true,
   "collectCoverageFrom": ["./src/**"],
   "coverageThreshold": {
     "global": {
-      "lines": 90
+      "lines": 80
     }
   }
 }
