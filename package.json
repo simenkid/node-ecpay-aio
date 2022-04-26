@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest --config jestconfig.json",
-    "prepare": "npm run build && minimize-js dist",
+    "prepare": "npm run build",
     "prepublishOnly": "npm test",
     "version": "git add -A src",
     "postversion": "git push && git push --tags"

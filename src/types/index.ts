@@ -122,6 +122,7 @@ export interface CVSPaymentParams {
   StoreExpireDate?: number;
   PaymentInfoURL?: string;
   ClientRedirectURL?: string;
+  Desc_1?: string;
   Desc_2?: string;
   Desc_3?: string;
   Desc_4?: string;
