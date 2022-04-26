@@ -1,6 +1,6 @@
 {
   "name": "node-ecpay-aio",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "ECPay AIO SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -39,5 +39,8 @@
   "dependencies": {
     "iconv-lite": "^0.6.3",
     "yup": "^0.32.11"
+  },
+  "engines": {
+    "node": ">= 10.24.1"
   }
 }
