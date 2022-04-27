@@ -1,5 +1,5 @@
 import { createHash } from 'crypto';
-import { URL, URLSearchParams, urlToHttpOptions } from 'url';
+import { URL, URLSearchParams } from 'url';
 import { Buffer } from 'buffer';
 import { request } from 'https';
 import { decodeStream } from 'iconv-lite';
@@ -128,9 +128,14 @@ export async function PostRequest<T>(config: {
   const { apiUrl, params, responseEncoding = 'utf8' } = config;
   const _url = new URL(apiUrl);
   const postData = getQueryStringFromParams(params, true);
-
   const options = {
-    ...urlToHttpOptions(_url),
+    protocol: _url.protocol,
+    hostname: _url.hostname,
+    hash: _url.hash,
+    search: _url.search,
+    pathname: _url.pathname,
+    path: `${_url.pathname}${_url.search}`,
+    href: _url.toString(),
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
