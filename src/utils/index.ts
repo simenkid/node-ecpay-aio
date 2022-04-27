@@ -116,11 +116,11 @@ export function getDateTimeString(date?: Date) {
   })}`;
 }
 
-export async function PostRequest(config: {
+export async function PostRequest<T>(config: {
   apiUrl: string;
   params: {};
   responseEncoding?: 'utf8' | 'Big5';
-}): Promise<QueryResponseData> {
+}): Promise<T> {
   const { apiUrl, params, responseEncoding = 'utf8' } = config;
   const _url = new URL(apiUrl);
   const postData = getQueryStringFromParams(params, true);
@@ -134,7 +134,7 @@ export async function PostRequest(config: {
     },
   };
 
-  return new Promise<QueryResponseData>((resolve, reject) => {
+  return new Promise<T>((resolve, reject) => {
     const req = request(options, (rsp) => {
       const decodedRsp = decodeStream(responseEncoding);
       rsp.pipe(decodedRsp);
@@ -145,12 +145,20 @@ export async function PostRequest(config: {
       decodedRsp.on('end', () => {
         try {
           //if  QueryCreditCardPeriodInfo: parse json, otherwise parse x=y&m=n to object
-          const data: QueryResponseData = apiUrl.endsWith(
-            'QueryCreditCardPeriodInfo'
-          )
-            ? JSON.parse(dataStr)
-            : Object.fromEntries(new URLSearchParams(dataStr));
-          resolve(data);
+          let data: unknown;
+
+          if (apiUrl.endsWith('QueryCreditCardPeriodInfo')) {
+            data = JSON.parse(dataStr);
+          } else if (
+            apiUrl.endsWith('TradeNoAio') ||
+            apiUrl.endsWith('FundingReconDetail')
+          ) {
+            data = dataStr;
+          } else {
+            data = Object.fromEntries(new URLSearchParams(dataStr));
+          }
+
+          resolve(data as T);
         } catch (err) {
           reject(err);
         }

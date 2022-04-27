@@ -1,14 +1,10 @@
 //@ts-nocheck
 import { Merchant } from '../../feature/Merchant';
 import { TradeV2Query } from '../../feature/Query';
+import { TEST_MERCHANT_CONFIG, TEST_BASE_PARAMS } from '../test_setting';
 
 describe('TradeV2Query: Check Params Types', () => {
-  const merchant = new Merchant('Test', {
-    MerchantID: 'test-merchant-id',
-    HashKey: 'test-merchant-hashkey',
-    HashIV: 'test-merchant-hashiv',
-    ReturnURL: 'https://api.test.com/our/hook',
-  });
+  const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
 
   test('Must throw without CreditRefundId', () => {
     expect(() => {
@@ -65,5 +61,21 @@ describe('TradeV2Query: Check Params Types', () => {
         CreditCheckCode: '123',
       });
     }).toThrowError('must be a `number` type');
+  });
+});
+
+// note: 無測試環境API
+describe('TradeV2Query: Remote Query', () => {
+  const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
+
+  test('Must throw because no staging environemt for testing.', async () => {
+    expect(async () => {
+      const query = merchant.createQuery(TradeV2Query, {
+        CreditRefundId: 100,
+        CreditAmount: 1000,
+        CreditCheckCode: 123,
+      });
+      const data = await query.read();
+    }).rejects.toThrowError('API url is not provided or infeasible');
   });
 });

@@ -1,5 +1,9 @@
 import { Merchant } from './Merchant';
-import { getCurrentUnixTimeStampOffset } from '../utils';
+import {
+  generateCheckMacValue,
+  getCurrentUnixTimeStampOffset,
+  PostRequest,
+} from '../utils';
 import {
   CreditCardPeriodActionParamsSchema,
   DoActionParamsSchema,
@@ -30,18 +34,18 @@ export class Action<T> {
 
     // every action requires MerchantID and CheckMacValue
     const actionParams: T & { MerchantID: string } = {
-      MerchantID: this.merchant.config.MerchantID,
+      MerchantID,
       ...this.params,
-      // TBD, CheckMacValue
     };
 
-    return new Promise((resolve, reject) => {
-      if (!this.apiUrl)
-        reject(
-          new Error(
-            `API url is not provided or infeasible for ${this.merchant.mode} mode.`
-          )
-        );
+    const CheckMacValue = generateCheckMacValue(actionParams, HashKey, HashIV);
+
+    return PostRequest({
+      apiUrl: this.apiUrl,
+      params: {
+        ...actionParams,
+        CheckMacValue,
+      },
     });
   }
 }

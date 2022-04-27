@@ -47,6 +47,39 @@ const ECPayServiceUrls: ECPayAIOServiceUrls = {
   Do: {
     Production: `${prodBaseUrl}/CreditDetail/DoAction`,
   },
+  // TBD: 以下為發票相關功能
+  InvoiceCancelDelayIssue: {
+    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/CancelDelayIssue',
+    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/CancelDelayIssue',
+  },
+  InvoiceInvalid: {
+    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/Invalid',
+    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/Invalid',
+  },
+  InvoiceVoidReIssue: {
+    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/VoidWithReIssue',
+    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/VoidWithReIssue',
+  },
+  InvoiceGetIssue: {
+    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/GetIssue',
+    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/GetIssue',
+  },
+  InvoiceNotify: {
+    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/InvoiceNotify',
+    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/InvoiceNotify',
+  },
+  InvoicePrint: {
+    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/InvoicePrint',
+    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/InvoicePrint',
+  },
+  InvoiceCheckBarcode: {
+    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/CheckBarcode',
+    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/CheckBarcode',
+  },
+  InvoiceCheckLoveCode: {
+    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/CheckLoveCode',
+    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/CheckLoveCode',
+  },
 };
 
 export default ECPayServiceUrls;

@@ -1,14 +1,10 @@
 //@ts-nocheck
 import { Merchant } from '../../feature/Merchant';
 import { FundingReconDetailQuery } from '../../feature/Query';
+import { TEST_MERCHANT_CONFIG } from '../test_setting';
 
 describe('FundingReconDetailQuery: Check Params Types', () => {
-  const merchant = new Merchant('Test', {
-    MerchantID: 'test-merchant-id',
-    HashKey: 'test-merchant-hashkey',
-    HashIV: 'test-merchant-hashiv',
-    ReturnURL: 'https://api.test.com/our/hook',
-  });
+  const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
 
   test('Must throw without PayDateType', () => {
     expect(() => {
@@ -117,5 +113,21 @@ describe('FundingReconDetailQuery: Check Params Types', () => {
         CharSet: '3',
       });
     }).toThrowError('must be one of');
+  });
+});
+
+// note: 無測試環境API
+describe('FundingReconDetailQuery: Remote Query', () => {
+  const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
+
+  test('Must throw because no staging environemt for testing.', async () => {
+    expect(async () => {
+      const query = merchant.createQuery(FundingReconDetailQuery, {
+        PayDateType: 'fund',
+        StartDate: '2022-04-26',
+        EndDate: '2022-04-26',
+      });
+      const data = await query.read();
+    }).rejects.toThrowError('API url is not provided or infeasible');
   });
 });

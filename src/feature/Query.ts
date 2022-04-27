@@ -18,6 +18,10 @@ import {
   FundingReconDetailQueryParams,
   PaymentInfoQueryParams,
   QueryResponseData,
+  CreditCardPeriodInfoData,
+  PaymentInfoData,
+  TradeInfoData,
+  TradeV2Data,
 } from '../types';
 
 export class Query<T> {
@@ -32,7 +36,7 @@ export class Query<T> {
     this.params = { ...params };
   }
 
-  async read(): Promise<QueryResponseData> {
+  async _read<T>(): Promise<T> {
     if (!this.apiUrl || !this.apiUrl.startsWith('https://'))
       throw new Error(
         `API url is not provided or infeasible for ${this.merchant.mode} mode.`
@@ -48,7 +52,7 @@ export class Query<T> {
 
     const CheckMacValue = generateCheckMacValue(postParams, HashKey, HashIV);
 
-    return PostRequest({
+    return PostRequest<T>({
       apiUrl: this.apiUrl,
       params: {
         ...postParams,
@@ -73,6 +77,10 @@ export class TradeInfoQuery extends Query<TradeInfoQueryParams> {
       PlatformID: this.merchant.config.PlatformID,
     };
   }
+
+  async read() {
+    return this._read<TradeInfoData>();
+  }
 }
 
 export class PaymentInfoQuery extends Query<PaymentInfoQueryParams> {
@@ -88,6 +96,10 @@ export class PaymentInfoQuery extends Query<PaymentInfoQueryParams> {
       TimeStamp: getCurrentUnixTimeStampOffset(120),
       PlatformID: this.merchant.config.PlatformID,
     };
+  }
+
+  async read() {
+    return this._read<PaymentInfoData>();
   }
 }
 
@@ -109,6 +121,29 @@ export class CreditCardPeriodInfoQuery extends Query<CreditCardPeriodInfoQueryPa
       PlatformID: this.merchant.config.PlatformID,
     };
   }
+
+  async read() {
+    return this._read<CreditCardPeriodInfoData>();
+  }
+}
+
+// note: 無測試環境可用, TBD: testing@production
+export class TradeV2Query extends Query<TradeV2QueryParams> {
+  _params: TradeV2QueryParams;
+
+  constructor(merchant: Merchant, params: TradeV2QueryParams) {
+    super(merchant, params);
+    TradeV2QueryParamsSchema.validateSync(params);
+
+    this.apiUrl = merchant.ecpayServiceUrls.TradeV2[merchant.mode];
+    this._params = {
+      ...this.params,
+    };
+  }
+
+  async read() {
+    return this._read<TradeV2Data>();
+  }
 }
 
 export class TradeNoAioQuery extends Query<TradeNoAioQueryParams> {
@@ -125,22 +160,13 @@ export class TradeNoAioQuery extends Query<TradeNoAioQueryParams> {
       ...this.params,
     };
   }
-}
 
-export class TradeV2Query extends Query<TradeV2QueryParams> {
-  _params: TradeV2QueryParams;
-
-  constructor(merchant: Merchant, params: TradeV2QueryParams) {
-    super(merchant, params);
-    TradeV2QueryParamsSchema.validateSync(params);
-
-    this.apiUrl = merchant.ecpayServiceUrls.TradeV2[merchant.mode];
-    this._params = {
-      ...this.params,
-    };
+  async read() {
+    return this._read<string>();
   }
 }
 
+// note: 無測試環境可用, TBD: testing@production
 export class FundingReconDetailQuery extends Query<FundingReconDetailQueryParams> {
   _params: FundingReconDetailQueryParams;
 
@@ -153,5 +179,9 @@ export class FundingReconDetailQuery extends Query<FundingReconDetailQueryParams
     this._params = {
       ...this.params,
     };
+  }
+
+  async read() {
+    return this._read<string>();
   }
 }

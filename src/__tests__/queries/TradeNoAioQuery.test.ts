@@ -1,14 +1,10 @@
 //@ts-nocheck
 import { Merchant } from '../../feature/Merchant';
 import { TradeNoAioQuery } from '../../feature/Query';
+import { TEST_MERCHANT_CONFIG, TEST_BASE_PARAMS } from '../test_setting';
 
 describe('TradeNoAioQuery: Check Params Types', () => {
-  const merchant = new Merchant('Test', {
-    MerchantID: 'test-merchant-id',
-    HashKey: 'test-merchant-hashkey',
-    HashIV: 'test-merchant-hashiv',
-    ReturnURL: 'https://api.test.com/our/hook',
-  });
+  const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
 
   test('Must throw without DateType', () => {
     expect(() => {
@@ -256,5 +252,23 @@ describe('TradeNoAioQuery: Check Params Types', () => {
         CharSet: '3',
       });
     }).toThrowError('must be one of');
+  });
+});
+
+describe('TradeNoAioQuery: Remote Query', () => {
+  const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
+
+  test('Query', async () => {
+    jest.setTimeout(60000);
+
+    const query = merchant.createQuery(TradeNoAioQuery, {
+      DateType: '2',
+      BeginDate: '2022-04-26',
+      EndDate: '2022-04-26',
+      MediaFormated: '1',
+      PaymentType: '01',
+    });
+    const data = await query.read();
+    expect(data).toBeTruthy();
   });
 });
