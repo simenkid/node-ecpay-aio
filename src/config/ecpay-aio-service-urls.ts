@@ -43,7 +43,7 @@ const ECPayServiceUrls: ECPayAIOServiceUrls = {
     Production: `${prodBaseUrl}/Cashier/CreditCardPeriodAction`,
     Test: `${testBaseUrl}/Cashier/CreditCardPeriodAction`,
   },
-  // 信用卡請退款
+  // 信用卡關帳、請退款
   Do: {
     Production: `${prodBaseUrl}/CreditDetail/DoAction`,
   },

@@ -1,6 +1,7 @@
 //@ts-nocheck
 import { Merchant } from '../../feature/Merchant';
 import { DoAction } from '../../feature/Action';
+import { TEST_MERCHANT_CONFIG } from '../test_setting';
 
 describe('DoAction: Check Params Types', () => {
   const merchant = new Merchant('Test', {
@@ -89,5 +90,22 @@ describe('DoAction: Check Params Types', () => {
       let _params = { ...params, TotalAmount: 24.7 };
       const action = merchant.createAction(DoAction, _params);
     }).toThrowError('must be an integer');
+  });
+});
+
+// note: 無測試環境API
+describe('DoAction: Remote Execute', () => {
+  const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
+
+  test('Must throw because no staging environemt for testing.', async () => {
+    expect(async () => {
+      const action = merchant.createAction(DoAction, {
+        MerchantTradeNo: '4e5c882cab5a4796be7f',
+        TradeNo: '2204261428508660',
+        Action: 'C',
+        TotalAmount: 1000,
+      });
+      const result = await action.execute();
+    }).rejects.toThrowError('API url is not provided or infeasible');
   });
 });

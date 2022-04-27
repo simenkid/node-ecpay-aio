@@ -11,7 +11,9 @@ import {
 import {
   ActionResponseData,
   CreditCardPeriodActionParams,
+  CreditCardPeriodActionResponseData,
   DoActionParams,
+  DoActionResponseData,
 } from '../types';
 
 export class Action<T> {
@@ -25,7 +27,7 @@ export class Action<T> {
     this.params = { ...params };
   }
 
-  async execute(): Promise<ActionResponseData> {
+  async _execute<T>(): Promise<T> {
     if (!this.apiUrl)
       throw new Error(
         `API url is not provided or infeasible for ${this.merchant.mode} mode.`
@@ -33,14 +35,14 @@ export class Action<T> {
     const { MerchantID, HashKey, HashIV } = this.merchant.config;
 
     // every action requires MerchantID and CheckMacValue
-    const actionParams: T & { MerchantID: string } = {
+    const actionParams = {
       MerchantID,
-      ...this.params,
+      ...this._params,
     };
 
     const CheckMacValue = generateCheckMacValue(actionParams, HashKey, HashIV);
 
-    return PostRequest({
+    return PostRequest<T>({
       apiUrl: this.apiUrl,
       params: {
         ...actionParams,
@@ -63,9 +65,13 @@ export class CreditCardPeriodAction extends Action<CreditCardPeriodActionParams>
     this.apiUrl = merchant.ecpayServiceUrls.CreditCardPeriod[merchant.mode]!;
     this._params = {
       ...this.params,
-      TimeStamp: getCurrentUnixTimeStampOffset(120),
+      TimeStamp: getCurrentUnixTimeStampOffset(90),
       PlatformID: this.merchant.config.PlatformID,
     };
+  }
+
+  async execute() {
+    return this._execute<CreditCardPeriodActionResponseData>();
   }
 }
 
@@ -81,5 +87,9 @@ export class DoAction extends Action<DoActionParams> {
       ...this.params,
       PlatformID: this.merchant.config.PlatformID,
     };
+  }
+
+  async execute() {
+    return this._execute<DoActionResponseData>();
   }
 }

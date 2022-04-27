@@ -1,14 +1,10 @@
 //@ts-nocheck
 import { Merchant } from '../../feature/Merchant';
 import { CreditCardPeriodAction } from '../../feature/Action';
+import { TEST_MERCHANT_CONFIG, QueryTradeNo as QTN } from '../test_setting';
 
 describe('CreditCardPeriodAction: Check Params Types', () => {
-  const merchant = new Merchant('Test', {
-    MerchantID: 'test-merchant-id',
-    HashKey: 'test-merchant-hashkey',
-    HashIV: 'test-merchant-hashiv',
-    ReturnURL: 'https://api.test.com/our/hook',
-  });
+  const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
 
   test('Must throw without MerchantTradeNo', () => {
     expect(() => {
@@ -28,7 +24,7 @@ describe('CreditCardPeriodAction: Check Params Types', () => {
 
   test('Must throw when MerchantTradeNo is not a string', () => {
     expect(() => {
-      const query = merchant.createAction(CreditCardPeriodAction, {
+      const action = merchant.createAction(CreditCardPeriodAction, {
         MerchantTradeNo: 3,
         Action: 'ReAuth',
       });
@@ -37,7 +33,7 @@ describe('CreditCardPeriodAction: Check Params Types', () => {
 
   test('Must throw when Action is not a string', () => {
     expect(() => {
-      const query = merchant.createAction(CreditCardPeriodAction, {
+      const action = merchant.createAction(CreditCardPeriodAction, {
         MerchantTradeNo: 'test-no',
         Action: 3,
       });
@@ -46,10 +42,60 @@ describe('CreditCardPeriodAction: Check Params Types', () => {
 
   test('Must throw when Action is not one of ReAuth|Cancel', () => {
     expect(() => {
-      const query = merchant.createAction(CreditCardPeriodAction, {
+      const action = merchant.createAction(CreditCardPeriodAction, {
         MerchantTradeNo: 'test-no',
         Action: 'Re',
       });
     }).toThrowError('must be one of');
+  });
+});
+
+describe('CreditCardPeriodAction: Remote Actions', () => {
+  const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
+
+  test(`Must pass when execute CreditPeriod actions: ${QTN.CreditPeriod}.`, async () => {
+    const action = merchant.createAction(CreditCardPeriodAction, {
+      MerchantTradeNo: QTN.CreditPeriod,
+      Action: 'Cancel',
+    });
+
+    const data = await action.execute();
+    expect(data.MerchantTradeNo).toEqual(QTN.CreditPeriod);
+    expect(data).toHaveProperty('MerchantID');
+    expect(data).toHaveProperty('MerchantTradeNo');
+    expect(data).toHaveProperty('RtnCode');
+    expect(data).toHaveProperty('RtnMsg');
+
+    /* 
+      // Example: Verify Error
+      {
+        CheckMacValue:
+          '4523C18A4C3A78FAA7C69E50188C8AADABCBC2E686454DE4C115BF1452E53D89',
+        MerchantID: '',
+        MerchantTradeNo: '',
+        RtnCode: '10200083',
+        RtnMsg: '',
+      };
+
+      // Example: 停用成功
+      {
+        CheckMacValue:
+            '205B4135AAB1F78AAD407838E344A291C0CCD67BB3188A58992B07F27BE61006',
+        MerchantID: '2000132',
+        MerchantTradeNo: '20211026001969730',
+        RtnCode: '1',
+        RtnMsg: '停用成功',
+      };
+
+      // Example: 無法操作
+      {
+        CheckMacValue:
+            '71E658196AFD40D8F75481DE9DFC14279CAB0AEEA3EBB5C6F35D8E8265E58C2B',
+        MerchantID: '2000132',
+        MerchantTradeNo: '20211026001969730',
+        RtnCode: '100006',
+        RtnMsg: '該訂單狀態為停用中',
+      };
+    */
   });
 });

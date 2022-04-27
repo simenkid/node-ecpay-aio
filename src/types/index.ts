@@ -151,8 +151,6 @@ export interface AndroidPayPaymentParams {}
 /*
  * Query
  */
-export type QueryResponseData = Record<string, any>;
-
 export interface BaseQueryParams {
   MerchantTradeNo: string;
 }
@@ -205,11 +203,26 @@ export interface CreditCardPeriodActionParams {
   Action: 'ReAuth' | 'Cancel';
 }
 
+export interface CreditCardPeriodActionResponseData {
+  MerchantID: string;
+  MerchantTradeNo: string;
+  RtnCode: number;
+  RtnMsg: string;
+  CheckMacValue: string;
+}
+
 export interface DoActionParams {
   MerchantTradeNo: string;
   TradeNo: string;
   Action: 'C' | 'R' | 'E' | 'N';
   TotalAmount: number;
+}
+
+export interface DoActionResponseData {
+  MerchantID: string;
+  MerchantTradeNo: string;
+  RtnCode: number;
+  RtnMsg: string;
 }
 
 /*

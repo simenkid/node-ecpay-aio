@@ -4,7 +4,7 @@ import { Buffer } from 'buffer';
 import { request } from 'https';
 import { decodeStream } from 'iconv-lite';
 
-import { InvoiceParams, QueryResponseData } from '../types';
+import { InvoiceParams } from '../types';
 
 export function generateCheckMacValue(
   params: any,

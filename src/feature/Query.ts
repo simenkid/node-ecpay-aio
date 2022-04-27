@@ -17,7 +17,6 @@ import {
   TradeV2QueryParams,
   FundingReconDetailQueryParams,
   PaymentInfoQueryParams,
-  QueryResponseData,
   CreditCardPeriodInfoData,
   PaymentInfoData,
   TradeInfoData,

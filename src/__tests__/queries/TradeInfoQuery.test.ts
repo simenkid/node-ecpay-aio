@@ -58,7 +58,7 @@ describe('TradeInfoQuery: Remote Query Trades', () => {
     */
   });
 
-  test(`Must pass when query CreditOneTime: ${QTN.CreditDivide}.`, async () => {
+  test(`Must pass when query CreditDivide: ${QTN.CreditDivide}.`, async () => {
     const query = merchant.createQuery(TradeInfoQuery, {
       MerchantTradeNo: QTN.CreditDivide,
     });
