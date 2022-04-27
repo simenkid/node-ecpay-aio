@@ -1,6 +1,6 @@
 {
   "name": "node-ecpay-aio",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "ECPay AIO SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
