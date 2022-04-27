@@ -64,4 +64,4 @@
 
 ## License
 
-Licensed under [MIT](https://github.com/simenkid/node-ecpay-aio/blob/main/LICENSE.
+Licensed under [MIT](https://github.com/simenkid/node-ecpay-aio/blob/main/LICENSE).
