@@ -78,7 +78,15 @@ export class TradeInfoQuery extends Query<TradeInfoQueryParams> {
   }
 
   async read() {
-    return this._read<TradeInfoData>();
+    const { HashKey, HashIV } = this.merchant.config;
+
+    const data = await this._read<TradeInfoData>();
+    const computedCMV = generateCheckMacValue(data, HashKey, HashIV);
+
+    if (data.CheckMacValue !== computedCMV)
+      throw new Error('Validation fails: invalid CheckMacValue.');
+
+    return data;
   }
 }
 
@@ -98,7 +106,15 @@ export class PaymentInfoQuery extends Query<PaymentInfoQueryParams> {
   }
 
   async read() {
-    return this._read<PaymentInfoData>();
+    const { HashKey, HashIV } = this.merchant.config;
+
+    const data = await this._read<PaymentInfoData>();
+    const computedCMV = generateCheckMacValue(data, HashKey, HashIV);
+
+    if (data.CheckMacValue !== computedCMV)
+      throw new Error('Validation fails: invalid CheckMacValue.');
+
+    return data;
   }
 }
 

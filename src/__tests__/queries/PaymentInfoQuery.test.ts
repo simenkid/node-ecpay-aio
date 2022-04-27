@@ -134,6 +134,26 @@ describe('PaymentInfoQuery: Remote Query Async PaymentInfo of ATM, CVS and BARCO
       };
     */
   });
+
+  test(`Must throw error if CheckMacValue fails: ${QTN.CreditOneTime}.`, async () => {
+    expect(async () => {
+      const query = merchant.createQuery(PaymentInfoQuery, {
+        MerchantTradeNo: QTN.BARCODE,
+      });
+
+      query.__read = query._read;
+
+      query._read = async () => {
+        const result = await query.__read();
+        result.CheckmacValue =
+          'E878910636FA75CBD381C59939D4B53E9AC946DFE1279AF7428A886B0B60DE10'; //  bad mac value
+
+        return result;
+      };
+
+      const data = await query.read();
+    }).rejects.toThrowError('invalid CheckMacValue');
+  });
 });
 
 describe('PaymentInfoQuery: Remote Query Sync PaymentInfo of CreditCard and WebATM', () => {

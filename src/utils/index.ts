@@ -17,7 +17,11 @@ export function generateCheckMacValue(
   excludedParams.forEach((p) => delete _params[p]);
 
   const mac = Object.keys(_params)
-    .sort()
+    .sort((a, b) => {
+      if (a.toUpperCase() < b.toUpperCase()) return -1;
+      if (a.toUpperCase() > b.toUpperCase()) return 1;
+      return 0;
+    })
     .reduce((prev, curr) => (prev += `${curr}=${_params[curr]}&`), '');
 
   // TBD: 手冊 p.27 CarruerNum 條目說明待驗證
@@ -148,8 +152,10 @@ export async function PostRequest<T>(config: {
           let data: unknown;
 
           if (apiUrl.endsWith('QueryCreditCardPeriodInfo')) {
+            // No Response CheckMacValue
             data = JSON.parse(dataStr);
           } else if (
+            // No Response CheckMacValue
             apiUrl.endsWith('TradeNoAio') ||
             apiUrl.endsWith('FundingReconDetail')
           ) {

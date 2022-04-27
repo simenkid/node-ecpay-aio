@@ -98,4 +98,25 @@ describe('CreditCardPeriodAction: Remote Actions', () => {
       };
     */
   });
+
+  test(`Must throw error if CheckMacValue fails: ${QTN.CreditPeriod}.`, async () => {
+    expect(async () => {
+      const action = merchant.createAction(CreditCardPeriodAction, {
+        MerchantTradeNo: QTN.CreditPeriod,
+        Action: 'Cancel',
+      });
+
+      action.__execute = action._execute;
+
+      action._execute = async () => {
+        const result = await action.__execute();
+        result.CheckmacValue =
+          'E878910636FA75CBD381C59939D4B53E9AC946DFE1279AF7428A886B0B60DE10'; //  bad mac value
+
+        return result;
+      };
+
+      const data = await action.execute();
+    }).rejects.toThrowError('invalid CheckMacValue');
+  });
 });

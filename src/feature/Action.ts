@@ -71,7 +71,15 @@ export class CreditCardPeriodAction extends Action<CreditCardPeriodActionParams>
   }
 
   async execute() {
-    return this._execute<CreditCardPeriodActionResponseData>();
+    const { HashKey, HashIV } = this.merchant.config;
+
+    const data = await this._execute<CreditCardPeriodActionResponseData>();
+    const computedCMV = generateCheckMacValue(data, HashKey, HashIV);
+
+    if (data.CheckMacValue !== computedCMV)
+      throw new Error('Validation fails: invalid CheckMacValue.');
+
+    return data;
   }
 }
 
