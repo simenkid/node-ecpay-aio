@@ -3,7 +3,6 @@ import { URL, URLSearchParams } from 'url';
 import { Buffer } from 'buffer';
 import { request } from 'https';
 import { decodeStream } from 'iconv-lite';
-
 import { InvoiceParams } from '../types';
 
 export function generateCheckMacValue(
@@ -166,7 +165,7 @@ export async function PostRequest<T>(config: {
           ) {
             data = dataStr;
           } else {
-            data = Object.fromEntries(new URLSearchParams(dataStr));
+            data = fromEntries(new URLSearchParams(dataStr));
           }
 
           resolve(data as T);
@@ -198,4 +197,13 @@ export function getQueryStringFromParams(data: {}, sort?: boolean) {
 
   if (sort) _params.sort();
   return _params.toString();
+}
+
+export function fromEntries<T = any>(
+  entries: Iterable<readonly [PropertyKey, T]>
+): { [k: string]: T } {
+  return [...entries].reduce((obj, [key, val]) => {
+    obj[key] = val;
+    return obj;
+  }, {} as Record<PropertyKey, T>);
 }
