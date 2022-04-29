@@ -207,3 +207,25 @@ export function fromEntries<T = any>(
     return obj;
   }, {} as Record<PropertyKey, T>);
 }
+
+export function parseIntegerFileds(input: any, fields: string[]) {
+  const result: any = { ...input };
+
+  fields.forEach((key) => {
+    let val = result[key as keyof typeof input];
+
+    if (typeof val === 'string' && val !== '') {
+      let parsed = parseInt(val, 10);
+      if (!isNaN(parsed)) result[key as keyof typeof input] = parsed;
+    }
+  });
+
+  return result;
+}
+
+// RtnCode, gwsr, amount, clsamt
+
+// TradeAmt, HandlingCharge, PaymentTypeChargeFee
+// PeriodAmount, TotalAmount, Frequency, ExecTimes,
+// TotalSuccessTimes, TotalSuccessAmount
+// RtnCode

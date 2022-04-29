@@ -2,6 +2,7 @@ import { Merchant } from './Merchant';
 import {
   generateCheckMacValue,
   getCurrentUnixTimeStampOffset,
+  parseIntegerFileds,
   PostRequest,
 } from '../utils';
 import {
@@ -22,6 +23,31 @@ import {
   TradeInfoData,
   TradeV2Data,
 } from '../types';
+
+const QUERY_RESULT_BASE_INT_FIELDS = [
+  'TradeAmt',
+  'HandlingCharge',
+  'PaymentTypeChargeFee',
+  'PeriodAmount',
+  'TotalAmount',
+  'Frequency',
+  'ExecTimes',
+  'TotalSuccessTimes',
+  'TotalSuccessAmount',
+  'RtnCode',
+];
+
+const QUERY_ADDITIONAL_INT_FIELDS = ['RtnCode', 'gwsr', 'amount', 'clsamt'];
+const QUERY_EXTRAINFO_INT_FIELDS = [
+  'stage',
+  'stast',
+  'staed',
+  'eci',
+  'red_dan',
+  'red_de_amt',
+  'red_ok_amt',
+  'red_yet',
+];
 
 export class Query<T> {
   merchant: Merchant;
@@ -51,7 +77,7 @@ export class Query<T> {
 
     const CheckMacValue = generateCheckMacValue(postParams, HashKey, HashIV);
 
-    return PostRequest<T>({
+    const _result = await PostRequest<T>({
       apiUrl: this.apiUrl,
       params: {
         ...postParams,
@@ -59,6 +85,9 @@ export class Query<T> {
       },
       responseEncoding: this.responseDataEncoding,
     });
+
+    const result = parseIntegerFileds(_result, QUERY_RESULT_BASE_INT_FIELDS);
+    return result;
   }
 }
 
@@ -80,13 +109,17 @@ export class TradeInfoQuery extends Query<TradeInfoQueryParams> {
   async read() {
     const { HashKey, HashIV } = this.merchant.config;
 
-    const data = await this._read<TradeInfoData>();
-    const computedCMV = generateCheckMacValue(data, HashKey, HashIV);
+    const _data = await this._read<TradeInfoData>();
+    const computedCMV = generateCheckMacValue(_data, HashKey, HashIV);
 
-    if (data.CheckMacValue !== computedCMV)
+    if (_data.CheckMacValue !== computedCMV)
       throw new Error('Validation fails: invalid CheckMacValue.');
 
-    return data;
+    const result = parseIntegerFileds(_data, [
+      ...QUERY_ADDITIONAL_INT_FIELDS,
+      ...QUERY_EXTRAINFO_INT_FIELDS,
+    ]);
+    return result;
   }
 }
 
@@ -138,7 +171,18 @@ export class CreditCardPeriodInfoQuery extends Query<CreditCardPeriodInfoQueryPa
   }
 
   async read() {
-    return this._read<CreditCardPeriodInfoData>();
+    const _result = await this._read<CreditCardPeriodInfoData>();
+    const result = parseIntegerFileds(_result, QUERY_ADDITIONAL_INT_FIELDS);
+    if (Array.isArray(result.ExecLog)) {
+      (result.ExecLog as {}[]).forEach((log, index) => {
+        result.ExecLog[index] = parseIntegerFileds(
+          log,
+          QUERY_ADDITIONAL_INT_FIELDS
+        );
+      });
+    }
+
+    return result;
   }
 }
 
@@ -146,6 +190,8 @@ export class CreditCardPeriodInfoQuery extends Query<CreditCardPeriodInfoQueryPa
 export class TradeV2Query extends Query<TradeV2QueryParams> {
   _params: TradeV2QueryParams;
 
+  // amount, clsamt
+  // amount
   constructor(merchant: Merchant, params: TradeV2QueryParams) {
     super(merchant, params);
     TradeV2QueryParamsSchema.validateSync(params);

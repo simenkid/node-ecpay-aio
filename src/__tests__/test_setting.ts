@@ -19,12 +19,12 @@ export const TEST_BASE_PARAMS = {
  */
 
 export const QueryTradeNo = {
-  CreditOneTime: '4e5c882cab5a4796be7f',
+  CreditOneTime: 'test25174199894103', //'4e5c882cab5a4796be7f',
   CreditDivide: 'SG0000001547Xadbcfce',
   CreditPeriod: '20211026001969730',
   CreditFlexible: 'f76a43953fc546519ae',
   WebATM: '20220426133333',
   ATM: 'N22042600020513',
-  CVS: '7c80cdef716c4a2998d',
-  BARCODE: 'CK20220426401292',
+  CVS: '05677f89acc348939d3', // '2204220310222',
+  BARCODE: '1501222204252113159',
 };

@@ -425,7 +425,7 @@ export type TradeV2CloseData = {
 };
 
 export interface TradeV2ReturnValue {
-  TradeID: number; // Int
+  TradeID: string;
   amount: number; // Int
   clsamt: number; // Int
   authtime: string; // (24), 2016/5/12 下午 07:09:17

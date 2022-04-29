@@ -259,8 +259,6 @@ describe('TradeNoAioQuery: Remote Query', () => {
   const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
 
   test('Query', async () => {
-    jest.setTimeout(60000);
-
     const query = merchant.createQuery(TradeNoAioQuery, {
       DateType: '2',
       BeginDate: '2022-04-26',
@@ -270,5 +268,5 @@ describe('TradeNoAioQuery: Remote Query', () => {
     });
     const data = await query.read();
     expect(data).toBeTruthy();
-  });
+  }, 30000);
 });

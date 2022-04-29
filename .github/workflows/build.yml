@@ -61,7 +61,7 @@ jobs:
           auth: ${{ secrets.GIST_SECRET }}
           gistID: 6cd8ec3f4115bc7b0fc0cb646da2dd77
           filename: node-ecpay-aio__${{ env.BRANCH }}.json
-          label: Test Coverage
+          label: coverage
           message: ${{ env.COVERAGE }}
           color: green
           namedLogo: jest

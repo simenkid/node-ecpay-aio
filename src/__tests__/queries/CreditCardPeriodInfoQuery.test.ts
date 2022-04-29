@@ -38,34 +38,52 @@ describe('CreditCardPeriodInfoQuery: Remote Query', () => {
     /*
       // Example
       const data = {
+        ExecStatus: '0',
+        MerchantID: '2000132',
+        MerchantTradeNo: '20211026001969730',
+        TradeNo: '2110261713558708',
+        RtnCode: 1,
+        PeriodType: 'D',
+        Frequency: 91,
+        ExecTimes: 999,
+        PeriodAmount: 200,
+        amount: 200,
+        gwsr: 11718189,
+        process_date: '2021/10/26 17:14:27',
+        auth_code: '777777',
+        card4no: '2222',
+        card6no: '431195',
+        TotalSuccessTimes: 3,
+        TotalSuccessAmount: 600,
         ExecLog: [
           {
             RtnCode: 1,
             RtnMsg: '成功.',
-            TradeNo: '2204260959138173',
-            amount: 100,
+            amount: 200,
+            gwsr: 11718189,
+            process_date: '2021/10/26 17:14:27',
             auth_code: '777777',
-            gwsr: 11955800,
-            process_date: '2022/04/26 10:00:22',
+            TradeNo: '2110261713558708'
           },
-        ],
-        ExecStatus: '1',
-        ExecTimes: 12,
-        Frequency: 1,
-        MerchantID: '2000132',
-        MerchantTradeNo: 'a2394da5fa5c4ef6b0b',
-        PeriodAmount: 100,
-        PeriodType: 'M',
-        RtnCode: 1,
-        TotalSuccessAmount: 100,
-        TotalSuccessTimes: 1,
-        TradeNo: '2204260959138173',
-        amount: 100,
-        auth_code: '777777',
-        card4no: '4444',
-        card6no: '431195',
-        gwsr: 11955800,
-        process_date: '2022/04/26 10:00:22',
+          {
+            RtnCode: 1,
+            RtnMsg: '成功.',
+            amount: 200,
+            gwsr: 11823053,
+            process_date: '2022/01/25 14:37:29',
+            auth_code: '777777',
+            TradeNo: '20220125143728502143'
+          },
+          {
+            RtnCode: 1,
+            RtnMsg: '成功.',
+            amount: 200,
+            gwsr: 11956205,
+            process_date: '2022/04/26 14:34:54',
+            auth_code: '777777',
+            TradeNo: '20220426143453743539'
+          }
+        ]
       };
     */
   });
@@ -75,6 +93,7 @@ describe('CreditCardPeriodInfoQuery: Remote Query', () => {
       MerchantTradeNo: QTN.CreditOneTime,
     });
     const data = await query.read();
+
     expect(data.MerchantTradeNo).toBeFalsy();
     expect(data.TradeNo).toBeFalsy();
     expect(data.RtnCode).toBe(10200047); // Cant not find the trade data.

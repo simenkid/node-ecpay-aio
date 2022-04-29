@@ -23,6 +23,7 @@ describe('PaymentInfoQuery: Remote Query Async PaymentInfo of ATM, CVS and BARCO
       MerchantTradeNo: QTN.ATM,
     });
     const data = await query.read();
+
     expect(data.MerchantTradeNo).toEqual(QTN.ATM);
     expect(data.PaymentType).toContain('ATM_');
 
@@ -35,8 +36,6 @@ describe('PaymentInfoQuery: Remote Query Async PaymentInfo of ATM, CVS and BARCO
       // Example
       {
         BankCode: '005',
-        CheckMacValue:
-          '7878910636FA75CBD381C59939D4B53E9AC946DFE1279AF7428A886B0B60DE10',
         CustomField1: '',
         CustomField2: '',
         CustomField3: 'N22042600020',
@@ -45,13 +44,14 @@ describe('PaymentInfoQuery: Remote Query Async PaymentInfo of ATM, CVS and BARCO
         MerchantID: '2000132',
         MerchantTradeNo: 'N22042600020513',
         PaymentType: 'ATM_LAND',
-        RtnCode: '2',
+        RtnCode: 2,
         RtnMsg: 'Get VirtualAccount Succeeded',
         StoreID: '',
-        TradeAmt: '409',
+        TradeAmt: 409,
         TradeDate: '2022/04/26 14:21:51',
         TradeNo: '2204261421418645',
         vAccount: '5219111913209840',
+        CheckMacValue: '7878910636FA75CBD381C59939D4B53E9AC946DFE1279AF7428A886B0B60DE10'
       };
     */
   });
@@ -61,6 +61,7 @@ describe('PaymentInfoQuery: Remote Query Async PaymentInfo of ATM, CVS and BARCO
       MerchantTradeNo: QTN.CVS,
     });
     const data = await query.read();
+
     expect(data.MerchantTradeNo).toEqual(QTN.CVS);
     expect(data.PaymentType).toContain('CVS_');
 
@@ -72,25 +73,23 @@ describe('PaymentInfoQuery: Remote Query Async PaymentInfo of ATM, CVS and BARCO
     /*
       // Example
       {
-        CheckMacValue:
-          '6EBD4A68F004C5E9CE9926D47C7A129A8231429C5D0B04847EEC7BD51F140CD2',
         CustomField1: '',
         CustomField2: '',
         CustomField3: '',
         CustomField4: '',
-        ExpireDate: '2022/05/03 14:39:30',
+        ExpireDate: '2022/04/15 17:53:13',
         MerchantID: '2000132',
-        MerchantTradeNo: '7c80cdef716c4a2998d',
-        PaymentNo: 'LLL22116735498',
+        MerchantTradeNo: '05677f89acc348939d3',
+        PaymentNo: 'LLL22098722826',
         PaymentType: 'CVS_CVS',
-        PaymentURL:
-          'https://payment-stage.ecpay.com.tw/PaymentRule/CVSBarCode?PaymentNo=LLL22116735498',
-        RtnCode: '10100073',
+        PaymentURL: 'https://payment-stage.ecpay.com.tw/PaymentRule/CVSBarCode?PaymentNo=LLL22098722826',
+        RtnCode: 10100073,
         RtnMsg: 'Get CVS Code Succeeded.',
         StoreID: '',
-        TradeAmt: '200',
-        TradeDate: '2022/04/26 14:39:30',
-        TradeNo: '2204261439048696',
+        TradeAmt: 100,
+        TradeDate: '2022/04/08 17:53:13',
+        TradeNo: '2204081753086470',
+        CheckMacValue: 'DB0E06C7E1D0FF255E17914CFD33F0368500A1932721E1251E4C7E29EE6F5F6F'
       };
     */
   });
@@ -100,6 +99,7 @@ describe('PaymentInfoQuery: Remote Query Async PaymentInfo of ATM, CVS and BARCO
       MerchantTradeNo: QTN.BARCODE,
     });
     const data = await query.read();
+
     expect(data.MerchantTradeNo).toEqual(QTN.BARCODE);
     expect(data.PaymentType).toContain('BARCODE_');
 
@@ -164,7 +164,7 @@ describe('PaymentInfoQuery: Remote Query Sync PaymentInfo of CreditCard and WebA
       MerchantTradeNo: QTN.CreditOneTime,
     });
     const data = await query.read();
-    expect(data.RtnCode).toBe('10200047');
+    expect(data.RtnCode).toBe(10200047);
     expect(data.RtnMsg).toContain('Cant not find');
   });
 
@@ -173,7 +173,7 @@ describe('PaymentInfoQuery: Remote Query Sync PaymentInfo of CreditCard and WebA
       MerchantTradeNo: QTN.CreditDivide,
     });
     const data = await query.read();
-    expect(data.RtnCode).toBe('10200047');
+    expect(data.RtnCode).toBe(10200047);
     expect(data.RtnMsg).toContain('Cant not find');
   });
 
@@ -182,7 +182,7 @@ describe('PaymentInfoQuery: Remote Query Sync PaymentInfo of CreditCard and WebA
       MerchantTradeNo: QTN.CreditPeriod,
     });
     const data = await query.read();
-    expect(data.RtnCode).toBe('10200047');
+    expect(data.RtnCode).toBe(10200047);
     expect(data.RtnMsg).toContain('Cant not find');
   });
 
@@ -191,7 +191,7 @@ describe('PaymentInfoQuery: Remote Query Sync PaymentInfo of CreditCard and WebA
       MerchantTradeNo: QTN.CreditFlexible,
     });
     const data = await query.read();
-    expect(data.RtnCode).toBe('10200047');
+    expect(data.RtnCode).toBe(10200047);
     expect(data.RtnMsg).toContain('Cant not find');
   });
 
@@ -200,7 +200,7 @@ describe('PaymentInfoQuery: Remote Query Sync PaymentInfo of CreditCard and WebA
       MerchantTradeNo: QTN.WebATM,
     });
     const data = await query.read();
-    expect(data.RtnCode).toBe('10200047');
+    expect(data.RtnCode).toBe(10200047);
     expect(data.RtnMsg).toContain('Cant not find');
   });
 });
