@@ -3,7 +3,7 @@
 綠界全方位金流(ECPay All-In-One, AIO) SDK for Node.js with TypeScript Support
 
 [![build](https://github.com/simenkid/node-ecpay-aio/actions/workflows/build.yml/badge.svg)](https://github.com/simenkid/node-ecpay-aio/actions/workflows/build.yml)
-![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/simenkid/6cd8ec3f4115bc7b0fc0cb646da2dd77/raw/aadcd2ad323a5d555eeecd353729a220ed4d9a1e/node-ecpay-aio__heads_main.json?cacheSeconds=10)
+![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/simenkid/6cd8ec3f4115bc7b0fc0cb646da2dd77/raw/d473b387740594dc486c5b8032ad8ba7adb7b91b/node-ecpay-aio__heads_main.json)
 [![npm](https://img.shields.io/npm/v/node-ecpay-aio.svg?cacheSeconds=3600)](https://www.npmjs.com/package/node-ecpay-aio)
 [![npm](https://img.shields.io/npm/l/node-ecpay-aio.svg?cacheSeconds=3600)](https://github.com/simenkid/node-ecpay-aio/blob/main/LICENSE)
 [![node version](https://img.shields.io/node/v/node-ecpay-aio)](https://img.shields.io/node/v/node-ecpay-aio)
