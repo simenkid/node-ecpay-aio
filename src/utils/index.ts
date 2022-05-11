@@ -15,6 +15,11 @@ export function generateCheckMacValue(
 
   excludedParams.forEach((p) => delete _params[p]);
 
+  // Rip undefined fields off
+  Object.keys(_params).forEach((p) => {
+    if (_params[p] === undefined) delete _params[p];
+  });
+
   const mac = Object.keys(_params)
     .sort((a, b) => {
       if (a.toUpperCase() < b.toUpperCase()) return -1;
