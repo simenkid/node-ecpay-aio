@@ -62,8 +62,8 @@ describe('CreditOneTimePayment: Check Credit Base Params Types', () => {
 //   const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
 
 //   const baseParams = {
-//     MerchantTradeNo: 'nodeecpayaio0001',
-//     MerchantTradeDate: '2021/04/25 16:21:20',
+//     MerchantTradeNo: 'nodeecpayaio0011',
+//     MerchantTradeDate: '2021/05/22 11:20:20',
 //     TotalAmount: 999,
 //     TradeDesc: 'node-ecpay-aio testing order for CreditOneTimePayment',
 //     ItemName: 'test item name',
@@ -76,7 +76,18 @@ describe('CreditOneTimePayment: Check Credit Base Params Types', () => {
 //       {}
 //     );
 
-//     const html = await payment.checkout();
+//     const html = await payment.checkout({
+//       RelateNumber: 'rl-no',
+//       TaxType: '1',
+//       Donation: '0',
+//       Print: '0',
+//       InvoiceItemName: 'item1|item2',
+//       InvoiceItemCount: '2|5',
+//       InvoiceItemWord: '台|張',
+//       InvoiceItemPrice: '100|50',
+//       InvoiceRemark: '測試發票備註',
+//       CustomerPhone: '0911111111',
+//     });
 //     console.log(html);
 //   });
 // });
