@@ -3,6 +3,8 @@ import {
   generateCheckMacValue,
   generateRedirectPostForm,
   getEncodedInvoice,
+  parseIntegerFileds,
+  PostRequest,
 } from '../utils';
 import {
   ALLPaymentParamsSchema,
@@ -31,7 +33,9 @@ import {
   ALLPaymentParams,
   InvoiceParams,
   ECPayPaymentType,
+  PaymentInfoData,
 } from '../types';
+import { PaymentInfoQuery } from './Query';
 
 export class Payment<T> {
   merchant: Merchant;
@@ -91,6 +95,37 @@ export class Payment<T> {
     };
 
     return generateRedirectPostForm(this.apiUrl, postOrder);
+  }
+
+  async _placeOrder(invoice?: InvoiceParams): Promise<PaymentInfoData> {
+    const { MerchantID, HashKey, HashIV } = this.merchant.config;
+    const postParams = {
+      MerchantID,
+      ...this.params,
+    };
+
+    const CheckMacValue = generateCheckMacValue(postParams, HashKey, HashIV);
+
+    try {
+      const _result = await PostRequest<T>({
+        apiUrl: this.apiUrl,
+        params: {
+          ...postParams,
+          CheckMacValue,
+        },
+        responseEncoding: 'utf8',
+      });
+
+      const result = parseIntegerFileds(_result, ['TradeAmt', 'RtnCode']);
+
+      return this.merchant
+        .createQuery(PaymentInfoQuery, {
+          MerchantTradeNo: this.baseParams.MerchantTradeNo,
+        })
+        .read();
+    } catch (err) {
+      throw err;
+    }
   }
 }
 
@@ -170,10 +205,16 @@ export class ATMPayment extends Payment<ATMPaymentParams> {
 
     this.params.ClientRedirectURL =
       params.ClientRedirectURL ?? this.merchant.config.ClientRedirectURL;
+
     this.params.PaymentInfoURL =
       params.PaymentInfoURL ?? this.merchant.config.PaymentInfoURL;
 
     ATMPaymentParamsSchema.validateSync(this.params);
+  }
+
+  async placeOrder(invoice?: InvoiceParams): Promise<PaymentInfoData> {
+    this.params.ChooseSubPayment = this.params.ChooseSubPayment || 'BOT';
+    return this._placeOrder(invoice);
   }
 }
 
@@ -188,10 +229,16 @@ export class CVSPayment extends Payment<CVSPaymentParams> {
 
     this.params.ClientRedirectURL =
       params.ClientRedirectURL ?? this.merchant.config.ClientRedirectURL;
+
     this.params.PaymentInfoURL =
       params.PaymentInfoURL ?? this.merchant.config.PaymentInfoURL;
 
     CVSPaymentParamsSchema.validateSync(this.params);
+  }
+
+  async placeOrder(invoice?: InvoiceParams): Promise<PaymentInfoData> {
+    this.params.ChooseSubPayment = this.params.ChooseSubPayment || 'CVS';
+    return this._placeOrder(invoice);
   }
 }
 
@@ -206,10 +253,16 @@ export class BARCODEPayment extends Payment<BARCODEPaymentParams> {
 
     this.params.ClientRedirectURL =
       params.ClientRedirectURL ?? this.merchant.config.ClientRedirectURL;
+
     this.params.PaymentInfoURL =
       params.PaymentInfoURL ?? this.merchant.config.PaymentInfoURL;
 
     BARCODEPaymentParamsSchema.validateSync(this.params);
+  }
+
+  async placeOrder(invoice?: InvoiceParams): Promise<PaymentInfoData> {
+    this.params.ChooseSubPayment = this.params.ChooseSubPayment || 'BARCODE';
+    return this._placeOrder(invoice);
   }
 }
 
@@ -241,6 +294,7 @@ export class ALLPayment extends Payment<Partial<ALLPaymentParams>> {
 
     this.params.ClientRedirectURL =
       params.ClientRedirectURL ?? this.merchant.config.ClientRedirectURL;
+
     this.params.PaymentInfoURL =
       params.PaymentInfoURL ?? this.merchant.config.PaymentInfoURL;
 

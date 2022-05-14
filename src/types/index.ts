@@ -118,15 +118,19 @@ export interface CreditPeriodPaymentParams extends CreditPaymentBaseParams {
   PeriodReturnURL?: string;
 }
 
-export interface WebATMPaymentParams {}
+export interface WebATMPaymentParams {
+  ChooseSubPayment?: WebATMSubPaymentType;
+}
 
 export interface ATMPaymentParams {
+  ChooseSubPayment?: ATMSubPaymentType;
   ExpireDate?: number;
   PaymentInfoURL?: string;
   ClientRedirectURL?: string;
 }
 
 export interface CVSPaymentParams {
+  ChooseSubPayment?: CVSSubPaymentType;
   StoreExpireDate?: number;
   PaymentInfoURL?: string;
   ClientRedirectURL?: string;
@@ -137,6 +141,7 @@ export interface CVSPaymentParams {
 }
 
 export interface BARCODEPaymentParams {
+  ChooseSubPayment?: BARCODESubPaymentType;
   StoreExpireDate?: number;
   PaymentInfoURL?: string;
   ClientRedirectURL?: string;
@@ -311,6 +316,34 @@ export interface PaymentInfoData {
   Barcode2?: string;
   Barcode3?: string;
 }
+
+export type WebATMSubPaymentType =
+  | 'TAISHIN'
+  | 'ESUN'
+  | 'BOT'
+  | 'FUBON'
+  | 'CHINATRUST'
+  | 'FIRST'
+  | 'CATHAY'
+  | 'MEGA'
+  | 'LAND'
+  | 'TACHONG'
+  | 'SINOPAC';
+
+export type ATMSubPaymentType =
+  | 'TAISHIN'
+  | 'ESUN'
+  | 'BOT'
+  | 'FUBON'
+  | 'CHINATRUST'
+  | 'FIRST'
+  | 'LAND'
+  | 'CATHAY'
+  | 'TACHONG'
+  | 'PANHSIN';
+
+export type CVSSubPaymentType = 'CVS' | 'OK' | 'FAMILY' | 'HILIFE' | 'IBON';
+export type BARCODESubPaymentType = 'BARCODE';
 
 export type ECPayInfoPaymentType =
   | 'WebATM_TAISHIN'

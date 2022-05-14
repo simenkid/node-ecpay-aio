@@ -2,6 +2,7 @@
 import { Merchant } from '../../feature/Merchant';
 import { ATMPayment } from '../../feature/Payment';
 import { TEST_MERCHANT_CONFIG, TEST_BASE_PARAMS } from '../test_setting';
+import { getCurrentTaipeiTimeString } from '../../utils';
 
 const MERCHANT_CONFIG_ASYNC = {
   ...TEST_MERCHANT_CONFIG,
@@ -74,5 +75,38 @@ describe('ATMPayment: Check Params Constraints', () => {
         ExpireDate: 61,
       });
     }).toThrowError('must be less than or equal to 60');
+  });
+});
+
+describe('ATMPayment: html', () => {
+  const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
+
+  const baseParams: BasePaymentParams = {
+    MerchantTradeNo: `nea${getCurrentTaipeiTimeString({ format: 'Serial' })}`,
+    MerchantTradeDate: getCurrentTaipeiTimeString(),
+    TotalAmount: 999,
+    TradeDesc: 'node-ecpay-aio testing order for ATMPayment',
+    ItemName: 'test item name',
+  };
+
+  test('Checkout with ', async () => {
+    const payment = merchant.createPayment(ATMPayment, baseParams, {
+      // ChooseSubPayment: 'FIRST',
+      ExpireDate: 7,
+    });
+    const html = await payment.checkout();
+    // const html = await payment.checkout({
+    //   RelateNumber: 'rl-no-1',
+    //   TaxType: '1',
+    //   Donation: '0',
+    //   Print: '0',
+    //   InvoiceItemName: 'item1|item2',
+    //   InvoiceItemCount: '2|5',
+    //   InvoiceItemWord: '台|張',
+    //   InvoiceItemPrice: '100|50',
+    //   InvoiceRemark: '測試發票備註',
+    //   CustomerPhone: '0911111111',
+    // });
+    console.log(html);
   });
 });

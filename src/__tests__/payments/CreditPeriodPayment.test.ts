@@ -335,3 +335,39 @@ describe('PeriodType="Y": Check Params Constraints', () => {
     }).toThrowError('must be less than or equal to 9');
   });
 });
+
+describe('CreditPeriodPayment: html', () => {
+  const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
+
+  const baseParams: BasePaymentParams = {
+    MerchantTradeNo: 'necacc0001',
+    MerchantTradeDate: '2022/05/13 15:33:20',
+    TotalAmount: 999,
+    TradeDesc: 'node-ecpay-aio testing order for CreditPeriodPayment',
+    ItemName: 'test item name',
+  };
+
+  test('Checkout with ', async () => {
+    const payment = merchant.createPayment(CreditPeriodPayment, baseParams, {
+      PeriodAmount: 999,
+      PeriodType: 'M',
+      Frequency: 1,
+      ExecTimes: 99,
+      // PeriodReturnURL: 'https://ap.example.com/api',
+    });
+    const html = await payment.checkout();
+    // const html = await payment.checkout({
+    //   RelateNumber: 'rl-no-1',
+    //   TaxType: '1',
+    //   Donation: '0',
+    //   Print: '0',
+    //   InvoiceItemName: 'item1|item2',
+    //   InvoiceItemCount: '2|5',
+    //   InvoiceItemWord: '台|張',
+    //   InvoiceItemPrice: '100|50',
+    //   InvoiceRemark: '測試發票備註',
+    //   CustomerPhone: '0911111111',
+    // });
+    console.log(html);
+  });
+});

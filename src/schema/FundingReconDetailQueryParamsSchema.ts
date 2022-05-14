@@ -1,7 +1,11 @@
 import * as yup from 'yup';
 
 const FundingReconDetailQueryParamsSchema = yup.object().shape({
-  PayDateType: yup.string().strict().required().oneOf(['fund', 'close', 'enter']),
+  PayDateType: yup
+    .string()
+    .strict()
+    .required()
+    .oneOf(['fund', 'close', 'enter']),
   StartDate: yup
     .string()
     .strict()

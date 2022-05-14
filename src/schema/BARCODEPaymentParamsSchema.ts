@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 
 const BARCODEPaymentParamsSchema = yup.object().shape({
+  ChooseSubPayment: yup.string().strict().oneOf(['BARCODE']),
   StoreExpireDate: yup.number().strict().min(1).max(30),
   PaymentInfoURL: yup.string().max(200).url(),
   ClientRedirectURL: yup.string().max(200).url(),

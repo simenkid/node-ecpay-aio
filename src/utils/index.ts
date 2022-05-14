@@ -1,7 +1,9 @@
 import { createHash } from 'crypto';
 import { URL, URLSearchParams } from 'url';
 import { Buffer } from 'buffer';
-import { request } from 'https';
+import { request, createServer } from 'https';
+import { IncomingMessage, ServerResponse, RequestListener } from 'http';
+
 import { decodeStream } from 'iconv-lite';
 import { InvoiceParams } from '../types';
 
@@ -228,9 +230,26 @@ export function parseIntegerFileds(input: any, fields: string[]) {
   return result;
 }
 
-// RtnCode, gwsr, amount, clsamt
+export function getCurrentTaipeiTimeString(config?: {
+  timestamp?: number;
+  format?: 'Datetime' | 'Date' | 'Serial';
+}) {
+  const { timestamp = Date.now(), format = 'Datetime' } = config || {};
+  const tpeTimestamp = timestamp + 8 * 60 * 60;
+  const date = new Date(tpeTimestamp);
+  const [year, month, day, hour, minute, second, ms] = [
+    date.getFullYear(),
+    `0${date.getMonth() + 1}`.slice(-2),
+    `0${date.getDate()}`.slice(-2),
+    `0${date.getHours()}`.slice(-2),
+    `0${date.getMinutes()}`.slice(-2),
+    `0${date.getSeconds()}`.slice(-2),
+    `00${date.getMilliseconds()}`.slice(-3),
+  ];
 
-// TradeAmt, HandlingCharge, PaymentTypeChargeFee
-// PeriodAmount, TotalAmount, Frequency, ExecTimes,
-// TotalSuccessTimes, TotalSuccessAmount
-// RtnCode
+  return format === 'Datetime'
+    ? `${year}/${month}/${day} ${hour}:${minute}:${second}`
+    : format === 'Date'
+    ? `${year}/${month}/${day}`
+    : `${year}${month}${day}${hour}${minute}${second}${ms}`;
+}
