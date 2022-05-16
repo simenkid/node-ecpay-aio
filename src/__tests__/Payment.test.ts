@@ -1,5 +1,4 @@
 //@ts-nocheck
-
 import { Merchant } from '../feature/Merchant';
 import { CreditOneTimePayment } from '../feature/Payment';
 import { TEST_MERCHANT_CONFIG } from './test_setting';

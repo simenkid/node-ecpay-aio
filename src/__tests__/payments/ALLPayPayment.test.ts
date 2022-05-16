@@ -1,6 +1,7 @@
 //@ts-nocheck
 import { Merchant } from '../../feature/Merchant';
 import { ALLPayment } from '../../feature/Payment';
+import { getCurrentTaipeiTimeString } from '../../utils';
 import { TEST_MERCHANT_CONFIG, TEST_BASE_PARAMS } from '../test_setting';
 
 describe('AndroidPayment: Check Params Types', () => {
@@ -117,5 +118,24 @@ describe('AndroidPayment: Check Params Types', () => {
       const _params = { ...params, PeriodType: 'D', ExecTimes: 1000 };
       const payment = merchant.createPayment(ALLPayment, baseParams, _params);
     }).toThrowError('must be less than or equal to 999');
+  });
+});
+
+describe('ALLPayment: Redirect Post Form', () => {
+  const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
+
+  const baseParams: BasePaymentParams = {
+    MerchantTradeNo: `nea${getCurrentTaipeiTimeString({ format: 'Serial' })}`,
+    MerchantTradeDate: getCurrentTaipeiTimeString(),
+    TotalAmount: 999,
+    TradeDesc: 'node-ecpay-aio testing order for ALLPayment',
+    ItemName: 'test item name',
+  };
+
+  test('Checkout with ', async () => {
+    const payment = merchant.createPayment(ALLPayment, baseParams, {});
+
+    const html = await payment.checkout();
+    expect(html.startsWith('<form id="_form_aio_checkout"')).toBe(true);
   });
 });

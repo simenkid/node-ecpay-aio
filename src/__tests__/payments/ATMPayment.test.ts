@@ -1,8 +1,8 @@
 //@ts-nocheck
 import { Merchant } from '../../feature/Merchant';
 import { ATMPayment } from '../../feature/Payment';
-import { TEST_MERCHANT_CONFIG, TEST_BASE_PARAMS } from '../test_setting';
 import { getCurrentTaipeiTimeString } from '../../utils';
+import { TEST_MERCHANT_CONFIG, TEST_BASE_PARAMS } from '../test_setting';
 
 const MERCHANT_CONFIG_ASYNC = {
   ...TEST_MERCHANT_CONFIG,

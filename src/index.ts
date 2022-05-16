@@ -20,6 +20,16 @@ export {
   FundingReconDetailQuery,
 } from './feature/Query';
 
+export {
+  QueryError,
+  ActionError,
+  CheckMacValueError,
+  PlaceOrderError,
+} from './feature/Error';
+
 export { CreditCardPeriodAction, DoAction } from './feature/Action';
 
-export { getCurrentTaipeiTimeString } from './utils';
+export {
+  getCurrentTaipeiTimeString,
+  isValidReceivedCheckMacValue,
+} from './utils';

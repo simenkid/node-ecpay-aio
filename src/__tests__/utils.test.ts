@@ -272,11 +272,11 @@ describe('Query String', () => {
 });
 
 describe('getCurrentTaipeiTimeString', () => {
-  const timestamp = 1652577669234;
+  const timestamp = 1652693484763;
 
   test('Get datetime string', () => {
     const tpeDatetime = getCurrentTaipeiTimeString({ timestamp });
-    expect(tpeDatetime).toEqual('2022/05/15 09:21:38');
+    expect(tpeDatetime).toEqual('2022/05/16 17:31:24');
   });
 
   test('Get date string', () => {
@@ -284,7 +284,7 @@ describe('getCurrentTaipeiTimeString', () => {
       timestamp,
       format: 'Date',
     });
-    expect(tpeDatetime).toEqual('2022/05/15');
+    expect(tpeDatetime).toEqual('2022/05/16');
   });
 
   test('Get serial time string', () => {
@@ -292,6 +292,6 @@ describe('getCurrentTaipeiTimeString', () => {
       timestamp,
       format: 'Serial',
     });
-    expect(tpeDatetime).toEqual('20220518172109234');
+    expect(tpeDatetime).toEqual('20220516173124763');
   });
 });

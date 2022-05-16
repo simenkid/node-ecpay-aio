@@ -1,11 +1,11 @@
-import { createHash } from 'crypto';
-import { URL, URLSearchParams } from 'url';
 import { Buffer } from 'buffer';
 import { request, get } from 'https';
-
+import { URL, URLSearchParams } from 'url';
+import { createHash } from 'crypto';
 import { decodeStream } from 'iconv-lite';
-import { InvoiceParams } from '../types';
+
 import { CheckMacValueError, PlaceOrderError } from '../feature/Error';
+import { InvoiceParams } from '../types';
 
 export function generateCheckMacValue(
   params: any,
@@ -283,17 +283,17 @@ export function getCurrentTaipeiTimeString(config?: {
 }) {
   const { timestamp = Date.now(), format = 'Datetime' } = config || {};
 
-  const tzMinutesOffset = new Date(timestamp).getTimezoneOffset();
-  const tpeTimestamp = timestamp + 80 * 60 * 60 * 1000;
+  const tzDiff = getTzOffsetFromTaipei();
+  const tpeTimestamp = timestamp + tzDiff;
   const date = new Date(tpeTimestamp);
   const [year, month, day, hour, minute, second, ms] = [
     date.getFullYear(),
-    `0${date.getMonth() + 1}`.slice(-2),
-    `0${date.getDate()}`.slice(-2),
-    `0${date.getHours()}`.slice(-2),
-    `0${date.getMinutes()}`.slice(-2),
-    `0${date.getSeconds()}`.slice(-2),
-    `00${date.getMilliseconds()}`.slice(-3),
+    `${date.getMonth() + 1}`.padStart(2, '0'),
+    `${date.getDate()}`.padStart(2, '0'),
+    `${date.getHours()}`.padStart(2, '0'),
+    `${date.getMinutes()}`.padStart(2, '0'),
+    `${date.getSeconds()}`.padStart(2, '0'),
+    `${date.getMilliseconds()}`.padStart(3, '00'),
   ];
 
   return format === 'Datetime'
@@ -301,16 +301,6 @@ export function getCurrentTaipeiTimeString(config?: {
     : format === 'Date'
     ? `${year}/${month}/${day}`
     : `${year}${month}${day}${hour}${minute}${second}${ms}`;
-}
-
-export function parseCachedOrder(html: string) {
-  // const hidx = html.indexOf('?timeStamp=');
-  // const tidx = html.indexOf('">');
-  // const str = html.slice(hidx, tidx).replace(/&amp;/g, '&');
-  // return fromEntries(new URLSearchParams(str));
-  const hidx = html.indexOf('/Cashier');
-  const tidx = html.indexOf('">');
-  return html.slice(hidx, tidx).replace(/&amp;/g, '&');
 }
 
 export function isValidReceivedCheckMacValue(
@@ -325,4 +315,52 @@ export function isValidReceivedCheckMacValue(
 
   const computedCMV = generateCheckMacValue(data, hashKey, hashIV);
   return data.CheckMacValue === computedCMV;
+}
+
+interface TimeDetail {
+  year: string;
+  month: string;
+  day: string;
+  hour: string;
+  minute: string;
+  second: string;
+}
+
+function getTzOffsetFromTaipei() {
+  const options: Intl.DateTimeFormatOptions = {
+    timeZone: 'Asia/Taipei',
+    calendar: 'iso8601',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  };
+
+  const serverDate = new Date();
+  const serverTzOffsetFromUTC = serverDate.getTimezoneOffset() * 60 * 1000;
+
+  const dateTimeFormat = new Intl.DateTimeFormat(undefined, options); // Taipei
+  const parts = dateTimeFormat.formatToParts(serverDate);
+  const td: TimeDetail = parts.reduce((prev, curr) => {
+    prev[curr.type as keyof TimeDetail] = curr.value;
+    return prev;
+  }, {} as TimeDetail);
+
+  td.hour = td.hour === '24' ? '00' : td.hour;
+
+  const { year, month, day, hour, minute, second } = td;
+  const ms = serverDate.getMilliseconds().toString().padStart(3, '00');
+
+  const taipeiTime = new Date(
+    `${year}-${month}-${day}T${hour}:${minute}:${second}.${ms}Z`
+  );
+
+  //@ts-ignore
+  const taipeiTzOffsetFromUTC = -(taipeiTime - serverDate);
+  const diff = serverTzOffsetFromUTC - taipeiTzOffsetFromUTC;
+
+  return diff;
 }

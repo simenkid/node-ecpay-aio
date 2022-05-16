@@ -19,7 +19,6 @@ import {
   TradeV2Query,
   FundingReconDetailQuery,
 } from '../feature/Query';
-
 import { CreditCardPeriodAction, DoAction } from '../feature/Action';
 import { ECPayServiceUrls } from '../config';
 import { TEST_MERCHANT_CONFIG, TEST_BASE_PARAMS } from './test_setting';

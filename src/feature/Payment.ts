@@ -1,12 +1,10 @@
-import { request, get } from 'https';
 import { Merchant } from './Merchant';
+import { PaymentInfoQuery } from './Query';
 import {
   generateCheckMacValue,
   generateRedirectPostForm,
   getEncodedInvoice,
   placeOrderRequest,
-  getQueryStringFromParams,
-  // PlaceCachedOrderRequest,
 } from '../utils';
 import {
   ALLPaymentParamsSchema,
@@ -37,7 +35,6 @@ import {
   ECPayPaymentType,
   PaymentInfoData,
 } from '../types';
-import { PaymentInfoQuery } from './Query';
 
 export class Payment<T> {
   merchant: Merchant;

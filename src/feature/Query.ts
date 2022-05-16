@@ -1,4 +1,5 @@
 import { Merchant } from './Merchant';
+import { CheckMacValueError, QueryError } from './Error';
 import {
   generateCheckMacValue,
   getCurrentUnixTimestampOffset,
@@ -24,7 +25,6 @@ import {
   TradeInfoData,
   TradeV2Data,
 } from '../types';
-import { CheckMacValueError, QueryError } from './Error';
 
 const QUERY_RESULT_BASE_INT_FIELDS = [
   'TradeAmt',

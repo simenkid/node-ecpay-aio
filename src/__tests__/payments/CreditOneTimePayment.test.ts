@@ -1,6 +1,7 @@
 //@ts-nocheck
 import { Merchant } from '../../feature/Merchant';
 import { CreditOneTimePayment } from '../../feature/Payment';
+import { getCurrentTaipeiTimeString } from '../../utils';
 import { TEST_MERCHANT_CONFIG, TEST_BASE_PARAMS } from '../test_setting';
 
 describe('CreditOneTimePayment: Check Credit Base Params Types', () => {
@@ -58,36 +59,25 @@ describe('CreditOneTimePayment: Check Credit Base Params Types', () => {
   });
 });
 
-// describe('CreditOneTimePayment: html', () => {
-//   const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
+describe('CreditOneTimePayment: Redirect Post Form', () => {
+  const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
 
-//   const baseParams = {
-//     MerchantTradeNo: 'nodeecpayaio0011',
-//     MerchantTradeDate: '2021/05/22 11:20:20',
-//     TotalAmount: 999,
-//     TradeDesc: 'node-ecpay-aio testing order for CreditOneTimePayment',
-//     ItemName: 'test item name',
-//   };
+  const baseParams: BasePaymentParams = {
+    MerchantTradeNo: `nea${getCurrentTaipeiTimeString({ format: 'Serial' })}`,
+    MerchantTradeDate: getCurrentTaipeiTimeString(),
+    TotalAmount: 999,
+    TradeDesc: 'node-ecpay-aio testing order for CreditOneTimePayment',
+    ItemName: 'test item name',
+  };
 
-//   test('Checkout with ', async () => {
-//     const payment = merchant.createPayment(
-//       CreditOneTimePayment,
-//       baseParams,
-//       {}
-//     );
+  test('Checkout with ', async () => {
+    const payment = merchant.createPayment(
+      CreditOneTimePayment,
+      baseParams,
+      {}
+    );
 
-//     const html = await payment.checkout({
-//       RelateNumber: 'rl-no',
-//       TaxType: '1',
-//       Donation: '0',
-//       Print: '0',
-//       InvoiceItemName: 'item1|item2',
-//       InvoiceItemCount: '2|5',
-//       InvoiceItemWord: '台|張',
-//       InvoiceItemPrice: '100|50',
-//       InvoiceRemark: '測試發票備註',
-//       CustomerPhone: '0911111111',
-//     });
-//     console.log(html);
-//   });
-// });
+    const html = await payment.checkout();
+    expect(html.startsWith('<form id="_form_aio_checkout"')).toBe(true);
+  });
+});

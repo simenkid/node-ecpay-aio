@@ -1,4 +1,5 @@
 import { Merchant } from './Merchant';
+import { ActionError, CheckMacValueError } from './Error';
 import {
   generateCheckMacValue,
   getCurrentUnixTimestampOffset,
@@ -11,13 +12,11 @@ import {
   DoActionParamsSchema,
 } from '../schema';
 import {
-  ActionResponseData,
   CreditCardPeriodActionParams,
   CreditCardPeriodActionResponseData,
   DoActionParams,
   DoActionResponseData,
 } from '../types';
-import { ActionError, CheckMacValueError } from './Error';
 
 export class Action<T> {
   merchant: Merchant;
