@@ -1,11 +1,11 @@
 import { createHash } from 'crypto';
 import { URL, URLSearchParams } from 'url';
 import { Buffer } from 'buffer';
-import { request, createServer, get } from 'https';
-import { IncomingMessage, ServerResponse, RequestListener } from 'http';
+import { request, get } from 'https';
 
 import { decodeStream } from 'iconv-lite';
 import { InvoiceParams } from '../types';
+import { CheckMacValueError, PlaceOrderError } from '../feature/Error';
 
 export function generateCheckMacValue(
   params: any,
@@ -106,7 +106,7 @@ export function getCurrentUnixTimestampOffset(seconds?: number) {
   return Math.floor(new Date().getTime() / 1000) + seconds;
 }
 
-export async function PostRequest<T>(config: {
+export async function postRequest<T>(config: {
   apiUrl: string;
   params: {};
   responseEncoding?: 'utf8' | 'Big5';
@@ -160,25 +160,21 @@ export async function PostRequest<T>(config: {
           reject(err);
         }
       });
-      decodedRsp.on('error', (err) => {
-        reject(err);
-      });
+      decodedRsp.on('error', reject);
     });
 
-    req.on('error', (err) => {
-      reject(err);
-    });
-
+    req.on('error', reject);
     req.write(postData);
     req.end();
   });
 }
 
-export async function PlaceCachedOrderRequest(config: {
+export async function placeOrderRequest(config: {
+  aioBaseUrl: string;
   apiUrl: string;
   params: {};
 }): Promise<string> {
-  const { apiUrl, params } = config;
+  const { apiUrl, params, aioBaseUrl } = config;
   const _url = new URL(apiUrl);
   const postData = getQueryStringFromParams(params, true);
   const options = {
@@ -199,94 +195,48 @@ export async function PlaceCachedOrderRequest(config: {
   return new Promise<string>((resolve, reject) => {
     const req = request(options, (rsp) => {
       const decodedRsp = decodeStream('utf8');
-      rsp.pipe(decodedRsp);
-
       let dataStr = '';
-      // rsp.setEncoding('binary'); // default is binary
-      decodedRsp.on('data', (chunk) => (dataStr += chunk));
-      decodedRsp.on('end', () => {
-        try {
-          resolve(parseCachedOrder(dataStr));
-        } catch (err) {
-          reject(err);
-        }
-      });
-      decodedRsp.on('error', (err) => {
-        reject(err);
-      });
+
+      if (rsp.statusCode === 302) {
+        // redirect to create order
+        dataStr = '';
+        const redirectReq = get(
+          `${aioBaseUrl}${rsp.headers.location}`,
+          (redirectRsp) => {
+            redirectRsp.pipe(decodedRsp);
+
+            decodedRsp.on('data', (chunk) => (dataStr += chunk));
+            decodedRsp.on('end', () => {
+              resolve(dataStr);
+            });
+            decodedRsp.on('error', reject);
+          }
+        );
+
+        redirectReq.on('error', reject);
+        redirectReq.end();
+      } else {
+        rsp.pipe(decodedRsp);
+        decodedRsp.on('data', (chunk) => {
+          dataStr += chunk;
+        });
+        // not redirect: cannot create order automatically
+        decodedRsp.on('end', () => {
+          if (dataStr.includes('10300028'))
+            reject(
+              new PlaceOrderError(
+                'Duplicated MerchantTradeNo, create order failed.'
+              )
+            );
+          else reject(new PlaceOrderError('Create order failed.'));
+        });
+      }
+
+      decodedRsp.on('error', reject);
     });
 
-    req.on('error', (err) => {
-      reject(err);
-    });
-
+    req.on('error', reject);
     req.write(postData);
-    req.end();
-  });
-}
-
-export async function PlaceOrderRequest(config: {
-  apiUrl: string;
-  params: {};
-}): Promise<string> {
-  const apiUrl = config.apiUrl;
-  // const _url = new URL(apiUrl);
-  // const postData = getQueryStringFromParams(config.params, false);
-  // const options = {
-  //   protocol: _url.protocol,
-  //   hostname: _url.hostname,
-  //   hash: _url.hash,
-  //   search: _url.search,
-  //   pathname: _url.pathname,
-  //   path: `${_url.pathname}${_url.search}`,
-  //   href: _url.toString(),
-  //   method: 'GET',
-  //   // headers: {
-  //   //   'Content-Type': 'application/x-www-form-urlencoded',
-  //   //   'Content-Length': Buffer.byteLength(postData),
-  //   // },
-  // };
-
-  //   https.get('https://encrypted.google.com/', (res) => {
-  //   console.log('statusCode:', res.statusCode);
-  //   console.log('headers:', res.headers);
-
-  //   res.on('data', (d) => {
-  //     process.stdout.write(d);
-  //   });
-
-  // }).on('error', (e) => {
-  //   console.error(e);
-  // });
-
-  return new Promise<string>((resolve, reject) => {
-    const req = get(apiUrl, (rsp) => {
-      console.log(apiUrl);
-      console.log('statusCode:', rsp.statusCode);
-      console.log('headers:', rsp.headers);
-
-      const decodedRsp = decodeStream('utf8');
-      rsp.pipe(decodedRsp);
-
-      let dataStr = '';
-      // rsp.setEncoding('binary'); // default is binary
-      decodedRsp.on('data', (chunk) => (dataStr += chunk));
-      decodedRsp.on('end', () => {
-        try {
-          resolve(dataStr);
-        } catch (err) {
-          reject(err);
-        }
-      });
-      decodedRsp.on('error', (err) => {
-        reject(err);
-      });
-    });
-
-    req.on('error', (err) => {
-      reject(err);
-    });
-
     req.end();
   });
 }
@@ -359,4 +309,18 @@ export function parseCachedOrder(html: string) {
   const hidx = html.indexOf('/Cashier');
   const tidx = html.indexOf('">');
   return html.slice(hidx, tidx).replace(/&amp;/g, '&');
+}
+
+export function isValidReceivedCheckMacValue(
+  data: { CheckMacValue: string },
+  hashKey: string,
+  hashIV: string
+) {
+  if (!data.CheckMacValue)
+    throw new CheckMacValueError('No CheckMacValue field within data', data);
+
+  if (typeof data.CheckMacValue !== 'string') return false;
+
+  const computedCMV = generateCheckMacValue(data, hashKey, hashIV);
+  return data.CheckMacValue === computedCMV;
 }

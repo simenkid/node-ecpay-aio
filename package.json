@@ -1,7 +1,7 @@
 {
   "name": "node-ecpay-aio",
-  "version": "0.1.4",
-  "description": "ECPay AIO SDK for Node.js with TypeScript support.",
+  "version": "0.1.9",
+  "description": "A production-ready ECPay AIO SDK for Node.js with TypeScript support.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

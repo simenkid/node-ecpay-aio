@@ -78,7 +78,7 @@ describe('ATMPayment: Check Params Constraints', () => {
   });
 });
 
-describe('ATMPayment: html', () => {
+describe('ATMPayment: Redirect Post Form', () => {
   const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG);
 
   const baseParams: BasePaymentParams = {
@@ -91,62 +91,73 @@ describe('ATMPayment: html', () => {
 
   test('Checkout with ', async () => {
     const payment = merchant.createPayment(ATMPayment, baseParams, {
-      ClientRedirectURL:
-        'https://payment-stage.ecpay.com.tw/PaymentRule/ATMPaymentInfo',
-      ChooseSubPayment: 'BOT',
       ExpireDate: 7,
     });
+
     const html = await payment.checkout();
-    // const html = await payment.checkout({
-    //   RelateNumber: 'rl-no-1',
-    //   TaxType: '1',
-    //   Donation: '0',
-    //   Print: '0',
-    //   InvoiceItemName: 'item1|item2',
-    //   InvoiceItemCount: '2|5',
-    //   InvoiceItemWord: '台|張',
-    //   InvoiceItemPrice: '100|50',
-    //   InvoiceRemark: '測試發票備註',
-    //   CustomerPhone: '0911111111',
-    // });
-    // console.log(html);
+    expect(html.startsWith('<form id="_form_aio_checkout"')).toBe(true);
   });
 });
 
-// describe('ATMPayment: placeOrder', () => {
-//   const merchant = new Merchant('Test', {
-//     MerchantID: '2000132',
-//     HashKey: '5294y06JbISpM5x9',
-//     HashIV: 'v77hoKGq4kWxNNIS',
-//     ReturnURL: 'https://api.test.com/our/hook',
-//   });
+describe('ATMayment: Place Order', () => {
+  jest.setTimeout(60000);
+  const merchant = new Merchant('Test', MERCHANT_CONFIG_ASYNC);
 
-//   const baseParams: BasePaymentParams = {
-//     MerchantTradeNo: `nea${getCurrentTaipeiTimeString({ format: 'Serial' })}`,
-//     MerchantTradeDate: getCurrentTaipeiTimeString(),
-//     TotalAmount: 500,
-//     TradeDesc: 'node-ecpay-aio testing order for ATMPayment',
-//     ItemName: 'test item name',
-//   };
+  const baseParams: BasePaymentParams = {
+    MerchantTradeDate: getCurrentTaipeiTimeString(),
+    TotalAmount: 300,
+    TradeDesc: 'node-ecpay-aio testing order for CVSPayment',
+    ItemName: 'test item name',
+  };
 
-//   test('Placed Order with ', async () => {
-//     const payment = merchant.createPayment(ATMPayment, baseParams, {
-//       ExpireDate: 3,
-//     });
+  const invoice = {
+    RelateNumber: 'nea-ci',
+    TaxType: '1',
+    Donation: '0',
+    Print: '0',
+    InvoiceItemName: 'item1|item2',
+    InvoiceItemCount: '2|5',
+    InvoiceItemWord: '台|張',
+    InvoiceItemPrice: '100|50',
+    InvoiceRemark: '測試發票備註',
+    CustomerPhone: '0911111111',
+  };
 
-//     const rsp = await payment.placeOrder({
-//       RelateNumber: 'rl-no-1',
-//       TaxType: '1',
-//       Donation: '0',
-//       Print: '0',
-//       InvoiceItemName: 'item1|item2',
-//       InvoiceItemCount: '2|5',
-//       InvoiceItemWord: '台|張',
-//       InvoiceItemPrice: '100|50',
-//       InvoiceRemark: '測試發票備註',
-//       CustomerPhone: '0911111111',
-//     });
+  test('Must pass when placing a new order', async () => {
+    const mTradeNo = `nea${getCurrentTaipeiTimeString({ format: 'Serial' })}`;
+    const payment = merchant.createPayment(ATMPayment, {
+      MerchantTradeNo: mTradeNo,
+      ...baseParams,
+    });
 
-//     console.log(rsp);
-//   });
-// });
+    const rsp = await payment.placeOrder(invoice);
+    expect(rsp.RtnCode).toBe(2);
+    expect(rsp.MerchantTradeNo).toBe(mTradeNo);
+  });
+
+  test('Must be rejected when placing Order with a duplicated MerchantTradeNo', async () => {
+    await new Promise((r) => setTimeout(r, 500));
+
+    const mTradeNo = `nea${getCurrentTaipeiTimeString({ format: 'Serial' })}`;
+    const payment = merchant.createPayment(
+      ATMPayment,
+      {
+        MerchantTradeNo: mTradeNo,
+        ...baseParams,
+      },
+      {
+        ExpireDate: 3,
+      }
+    );
+
+    try {
+      const rsp = await payment.placeOrder(invoice);
+      const duplicatedRsp = await payment.placeOrder(invoice);
+    } catch (e) {
+      expect(e.name).toBe('PlaceOrderError');
+      expect(e.message).toBe(
+        'Duplicated MerchantTradeNo, create order failed.'
+      );
+    }
+  });
+});

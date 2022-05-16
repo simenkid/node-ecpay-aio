@@ -6,6 +6,7 @@ import {
   getCurrentUnixTimestampOffset,
   getQueryStringFromParams,
   getCurrentTaipeiTimeString,
+  isValidReceivedCheckMacValue,
 } from '../utils';
 
 describe('Check Mac Value Generation', () => {
@@ -81,6 +82,57 @@ describe('Check Mac Value Generation', () => {
     expect(mac).toEqual(
       '4503BC3F7513BA0E2512F4F14BDDD42A193A1EC6787BCEFA86F99C94F3E52CA2'
     );
+  });
+});
+
+describe('Check Mac Value Validator', () => {
+  const hashKey = '5294y06JbISpM5x9';
+  const hashIV = 'v77hoKGq4kWxNNIS';
+  const data = {
+    MerchantID: '2000132',
+    MerchantTradeNo: 'test-123456',
+    MerchantTradeDate: '2022/04/25 10:40:18',
+    TradeDesc: '測試交易',
+    ItemName: '測試牌 2B鉛筆 盒裝',
+    TotalAmount: 60,
+    ReturnURL: 'https://www.example.com/foo/bar',
+    ChoosePayment: 'ALL',
+    PaymentType: 'aio',
+    EncryptType: 1,
+    CheckMacValue:
+      '4503BC3F7513BA0E2512F4F14BDDD42A193A1EC6787BCEFA86F99C94F3E52CA2',
+  };
+
+  test('Valid CheckMacValue with test example. ', () => {
+    const result = isValidReceivedCheckMacValue(data, hashKey, hashIV);
+    expect(result).toEqual(true);
+  });
+
+  test('Invalid CheckMacValue with test example. ', () => {
+    const result = isValidReceivedCheckMacValue(
+      {
+        ...data,
+        CheckMacValue:
+          '4503BC3F7513BA0E2512F4F14BDDD42A193A1EC6787BCEFA86F99C94F3E52CA3',
+      },
+      hashKey,
+      hashIV
+    );
+    expect(result).toEqual(false);
+  });
+
+  test('Must throw if input data constains no CheckMacValue', () => {
+    expect(() => {
+      const _data = { ...data };
+      delete _data.CheckMacValue;
+      const result = isValidReceivedCheckMacValue(_data, hashKey, hashIV);
+    }).toThrowError('No CheckMacValue field');
+  });
+
+  test('Must return false if CheckMacValue is not a string', () => {
+    const _data = { ...data, CheckMacValue: 999 };
+    const result = isValidReceivedCheckMacValue(_data, hashKey, hashIV);
+    expect(result).toBe(false);
   });
 });
 

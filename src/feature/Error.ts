@@ -34,3 +34,11 @@ export class CheckMacValueError extends Error {
     this.response = JSON.stringify(rsp);
   }
 }
+
+export class PlaceOrderError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'PlaceOrderError';
+    this.message = message;
+  }
+}

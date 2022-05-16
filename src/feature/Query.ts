@@ -2,8 +2,9 @@ import { Merchant } from './Merchant';
 import {
   generateCheckMacValue,
   getCurrentUnixTimestampOffset,
+  isValidReceivedCheckMacValue,
   parseIntegerFileds,
-  PostRequest,
+  postRequest,
 } from '../utils';
 import {
   BaseQueryParamsSchema,
@@ -78,7 +79,7 @@ export class Query<T> {
 
     const CheckMacValue = generateCheckMacValue(postParams, HashKey, HashIV);
 
-    const _result = await PostRequest<T>({
+    const _result = await postRequest<T>({
       apiUrl: this.apiUrl,
       params: {
         ...postParams,
@@ -115,9 +116,8 @@ export class TradeInfoQuery extends Query<TradeInfoQueryParams> {
       ...QUERY_ADDITIONAL_INT_FIELDS,
       ...QUERY_EXTRAINFO_INT_FIELDS,
     ]);
-    const computedCMV = generateCheckMacValue(_data, HashKey, HashIV);
 
-    if (result.CheckMacValue !== computedCMV)
+    if (!isValidReceivedCheckMacValue(_data, HashKey, HashIV))
       throw new CheckMacValueError(
         `Check mac value of TradeInfoQuery response failed. MerchantTradeNo: ${this.params.MerchantTradeNo}.`,
         result
@@ -158,9 +158,8 @@ export class PaymentInfoQuery extends Query<PaymentInfoQueryParams> {
     const { HashKey, HashIV } = this.merchant.config;
 
     const data = await this._read<PaymentInfoData>();
-    const computedCMV = generateCheckMacValue(data, HashKey, HashIV);
 
-    if (data.CheckMacValue !== computedCMV)
+    if (!isValidReceivedCheckMacValue(data, HashKey, HashIV))
       throw new CheckMacValueError(
         `Check mac value of PaymentInfoQuery response failed. MerchantTradeNo: ${this.params.MerchantTradeNo}.`,
         data

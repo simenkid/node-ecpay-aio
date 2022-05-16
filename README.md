@@ -1,6 +1,6 @@
 # node-ecpay-aio
 
-綠界全方位金流(ECPay All-In-One, AIO) SDK for Node.js with TypeScript Support
+A production-ready 綠界全方位金流(ECPay All-In-One, AIO) SDK for Node.js with TypeScript Support
 
 [![build](https://github.com/simenkid/node-ecpay-aio/actions/workflows/build.yml/badge.svg)](https://github.com/simenkid/node-ecpay-aio/actions/workflows/build.yml)
 ![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/simenkid/6cd8ec3f4115bc7b0fc0cb646da2dd77/raw/d473b387740594dc486c5b8032ad8ba7adb7b91b/node-ecpay-aio__heads_main.json)
@@ -13,13 +13,13 @@
 
 ## Documentation
 
-本模組詳細使用說明請見 [User Guide](https://github.com/simenkid/node-ecpay-aio/wiki/User-Guide)
+本模組詳細使用說明請見 [User Guide](https://github.com/simenkid/node-ecpay-aio/wiki)
 
 <br />
 
 ## Overview
 
-本模組這是根據綠界官方 AIO 規格的全新實作，並非官方維護的 SDK 或是 fork 改寫版本。此模組的設計初衷是為了與官方最新的 API 規格一致、更貼近 JS 開發風格、更完善的文件說明、提供 TypeScript 支援以及盡可能完善的自動化測試來保證 SDK 穩定性。
+本模組是根據綠界官方 AIO 規格的全新實作，並非官方維護的 SDK 或是 fork 改寫版本。此模組的設計初衷是為了與官方最新的 API 規格一致、更貼近 JS 開發風格、提供 TypeScript 支援、盡可能完善的自動化測試以及更完善的文件說明。
 
 <br />
 
@@ -41,14 +41,13 @@ npm install --save node-ecpay-aio
 ## Features
 
 - 內建 TypeScript 支援
-- 按職責區分以下類別
-  - Merchant (特店)
-  - Payment (付款方式)
-  - Query (查詢)
-  - Action (操作)
-- 使用 [yup](https://github.com/jquense/yup) 對 API 要求參數與相依條件進行防衛驗證與拋出驗證失敗訊息
+- 按職責區分 Merchant (特店)、Payment (付款方式)、Query (查詢)、Action (操作)等類別
+- ATM、超商代碼與超商條碼可於後端建立訂單時一併獲得取號結果
+- 結構化的錯誤訊息，更易於程式流程控制
+- 使用 [yup](https://github.com/jquense/yup) 對 API 要求參數與相依條件進行防衛驗證
+- 自動為 REQ/RSP 產生與驗證 CheckMacValue，若驗證到接收響應之校驗碼不符會自動拋錯
+- 遠端查詢或操作作業失敗，會自動拋錯並附帶綠界傳回的錯誤碼、錯誤訊息與原始響應資料
 - 自動設定 derivable 的參數，如 `ChoosePayment`, `InvoiceMark` 等
-- 自動為 REQ/RSP 產生與驗證 CheckMacValue，接收時若驗證到校驗碼不符會自動拋錯
 - 支援 Node.js v10.x 以上 (自動測試環境包含 v10.x, v12.x, v14.x 與 v16.x)
 - Serverless (Lambda) friendly
 
@@ -56,8 +55,9 @@ npm install --save node-ecpay-aio
 
 ## Notes
 
+- 使用前建議先讀過官方文件與本模組 [User Guide](https://github.com/simenkid/node-ecpay-aio/wiki)
 - 歡迎發 Issue，但我不一定有時間修
-- 更歡迎發 PR (帶測試佳)或共同維護
+- 更歡迎發 PR（請帶測試，因本模組已在生產環境中使用）或共同維護
 - 本模組基本穩定，但有些功能綠界沒有提供 Testing stage，自動化測試跑不到那些 cases。
 
 <br />

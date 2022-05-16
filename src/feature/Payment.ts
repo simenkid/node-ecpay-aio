@@ -1,12 +1,12 @@
+import { request, get } from 'https';
 import { Merchant } from './Merchant';
 import {
   generateCheckMacValue,
   generateRedirectPostForm,
   getEncodedInvoice,
-  parseIntegerFileds,
-  PostRequest,
-  PlaceOrderRequest,
-  PlaceCachedOrderRequest,
+  placeOrderRequest,
+  getQueryStringFromParams,
+  // PlaceCachedOrderRequest,
 } from '../utils';
 import {
   ALLPaymentParamsSchema,
@@ -108,20 +108,11 @@ export class Payment<T> {
     const postOrder = this._prepareOrder(invoice);
 
     try {
-      const _result = await PlaceCachedOrderRequest({
+      const _result = await placeOrderRequest({
+        aioBaseUrl: this.merchant.ecpayServiceUrls.Aio[this.merchant.mode]!,
         apiUrl: this.apiUrl,
         params: postOrder,
       });
-
-      // const result = parseIntegerFileds(_result, ['TradeAmt', 'RtnCode']);
-      console.log('#####: ', _result);
-
-      const r = await PlaceOrderRequest({
-        apiUrl: this.merchant.ecpayServiceUrls.Aio[this.merchant.mode]!, //  `https://payment-stage.ecpay.com.tw${_result}`,
-        params: _result,
-      });
-
-      console.log('******: ', r);
 
       return this.merchant
         .createQuery(PaymentInfoQuery, {
@@ -142,7 +133,7 @@ export class CreditOneTimePayment extends Payment<CreditOneTimePaymentParams> {
   constructor(
     merchant: Merchant,
     baseParams: BasePaymentParams,
-    params: CreditOneTimePaymentParams
+    params: CreditOneTimePaymentParams = {}
   ) {
     super(merchant, baseParams, params);
     this.baseParams.ChoosePayment = 'Credit';
@@ -194,7 +185,7 @@ export class WebATMPayment extends Payment<WebATMPaymentParams> {
   constructor(
     merchant: Merchant,
     baseParams: BasePaymentParams,
-    params: WebATMPaymentParams
+    params: WebATMPaymentParams = {}
   ) {
     super(merchant, baseParams, params);
     this.baseParams.ChoosePayment = 'WebATM';
@@ -207,7 +198,7 @@ export class ATMPayment extends Payment<ATMPaymentParams> {
   constructor(
     merchant: Merchant,
     baseParams: BasePaymentParams,
-    params: ATMPaymentParams
+    params: ATMPaymentParams = {}
   ) {
     super(merchant, baseParams, params);
     this.baseParams.ChoosePayment = 'ATM';
@@ -231,7 +222,7 @@ export class CVSPayment extends Payment<CVSPaymentParams> {
   constructor(
     merchant: Merchant,
     baseParams: BasePaymentParams,
-    params: CVSPaymentParams
+    params: CVSPaymentParams = {}
   ) {
     super(merchant, baseParams, params);
     this.baseParams.ChoosePayment = 'CVS';
@@ -255,10 +246,11 @@ export class BARCODEPayment extends Payment<BARCODEPaymentParams> {
   constructor(
     merchant: Merchant,
     baseParams: BasePaymentParams,
-    params: BARCODEPaymentParams
+    params: BARCODEPaymentParams = {}
   ) {
     super(merchant, baseParams, params);
     this.baseParams.ChoosePayment = 'BARCODE';
+    this.params.ChooseSubPayment = this.params.ChooseSubPayment || 'BARCODE';
 
     this.params.ClientRedirectURL =
       params.ClientRedirectURL ?? this.merchant.config.ClientRedirectURL;
@@ -271,6 +263,8 @@ export class BARCODEPayment extends Payment<BARCODEPaymentParams> {
 
   async placeOrder(invoice?: InvoiceParams): Promise<PaymentInfoData> {
     this.params.ChooseSubPayment = this.params.ChooseSubPayment || 'BARCODE';
+    this.params.ClientRedirectURL = undefined;
+    this.params.PaymentInfoURL = undefined;
     return this._placeOrder(invoice);
   }
 }

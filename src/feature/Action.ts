@@ -2,8 +2,9 @@ import { Merchant } from './Merchant';
 import {
   generateCheckMacValue,
   getCurrentUnixTimestampOffset,
+  isValidReceivedCheckMacValue,
   parseIntegerFileds,
-  PostRequest,
+  postRequest,
 } from '../utils';
 import {
   CreditCardPeriodActionParamsSchema,
@@ -44,7 +45,7 @@ export class Action<T> {
 
     const CheckMacValue = generateCheckMacValue(actionParams, HashKey, HashIV);
 
-    return PostRequest<T>({
+    return postRequest<T>({
       apiUrl: this.apiUrl,
       params: {
         ...actionParams,
@@ -80,9 +81,8 @@ export class CreditCardPeriodAction extends Action<CreditCardPeriodActionParams>
       data,
       ['RtnCode']
     );
-    const computedCMV = generateCheckMacValue(data, HashKey, HashIV);
 
-    if (data.CheckMacValue !== computedCMV)
+    if (!isValidReceivedCheckMacValue(data, HashKey, HashIV))
       throw new CheckMacValueError(
         `Check mac value of CreditCardPeriodAction response failed. MerchantTradeNo: ${this.params.MerchantTradeNo}, Action: ${this.params.Action}.`,
         result
