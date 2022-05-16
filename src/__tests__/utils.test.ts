@@ -292,6 +292,6 @@ describe('getCurrentTaipeiTimeString', () => {
       timestamp,
       format: 'Serial',
     });
-    expect(tpeDatetime).toEqual('20220515092138034');
+    expect(tpeDatetime).toEqual('20220518172109234');
   });
 });

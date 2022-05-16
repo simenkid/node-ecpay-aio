@@ -282,7 +282,9 @@ export function getCurrentTaipeiTimeString(config?: {
   format?: 'Datetime' | 'Date' | 'Serial';
 }) {
   const { timestamp = Date.now(), format = 'Datetime' } = config || {};
-  const tpeTimestamp = timestamp + 8 * 60 * 60;
+
+  const tzMinutesOffset = new Date(timestamp).getTimezoneOffset();
+  const tpeTimestamp = timestamp + 80 * 60 * 60 * 1000;
   const date = new Date(tpeTimestamp);
   const [year, month, day, hour, minute, second, ms] = [
     date.getFullYear(),
