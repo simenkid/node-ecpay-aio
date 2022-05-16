@@ -1,29 +1,41 @@
 import { ECPayAIOServiceUrls } from '../types';
 
-const prodBaseUrl = 'https://payment.ecpay.com.tw';
-const testBaseUrl = 'https://payment-stage.ecpay.com.tw';
+const AioProdBaseUrl = 'https://payment.ecpay.com.tw';
+const AioTestBaseUrl = 'https://payment-stage.ecpay.com.tw';
+const AioProdCashierUrl = `${AioProdBaseUrl}/Cashier`;
+const AioTestCashierUrl = `${AioTestBaseUrl}/Cashier`;
+const B2CInvoiceProdUrl = `https://einvoice.ecpay.com.tw/B2CInvoice`;
+const B2CInvoiceTestUrl = `https://einvoice-stage.ecpay.com.tw/B2CInvoice`;
 
 // Default method: POST with application/x-www-form-urlencoded
 const ECPayServiceUrls: ECPayAIOServiceUrls = {
+  Aio: {
+    Production: AioProdBaseUrl,
+    Test: AioTestBaseUrl,
+  },
+  AioCashier: {
+    Production: AioProdCashierUrl,
+    Test: AioTestCashierUrl,
+  },
   // 產生訂單
   AioCheckOut: {
-    Production: `${prodBaseUrl}/Cashier/AioCheckOut/V5`,
-    Test: `${testBaseUrl}/Cashier/AioCheckOut/V5`,
+    Production: `${AioProdCashierUrl}/AioCheckOut/V5`,
+    Test: `${AioTestCashierUrl}/AioCheckOut/V5`,
   },
   // 查詢訂單
   TradeInfo: {
-    Production: `${prodBaseUrl}/Cashier/QueryTradeInfo/V5`,
-    Test: `${testBaseUrl}/Cashier/QueryTradeInfo/V5`,
+    Production: `${AioProdCashierUrl}/QueryTradeInfo/V5`,
+    Test: `${AioTestCashierUrl}/QueryTradeInfo/V5`,
   },
   // 查詢ATM/CVS/BARCODE取號結果
   PaymentInfo: {
-    Production: `${prodBaseUrl}/Cashier/QueryPaymentInfo`,
-    Test: `${testBaseUrl}/Cashier/QueryPaymentInfo`,
+    Production: `${AioProdCashierUrl}/QueryPaymentInfo`,
+    Test: `${AioTestCashierUrl}/QueryPaymentInfo`,
   },
   // 信用卡定期定額訂單查詢
   CreditCardPeriodInfo: {
-    Production: `${prodBaseUrl}/Cashier/QueryCreditCardPeriodInfo`,
-    Test: `${testBaseUrl}/Cashier/QueryCreditCardPeriodInfo`,
+    Production: `${AioProdCashierUrl}/QueryCreditCardPeriodInfo`,
+    Test: `${AioTestCashierUrl}/QueryCreditCardPeriodInfo`,
   },
   // 下載特店對帳媒體檔
   TradeNoAio: {
@@ -32,53 +44,53 @@ const ECPayServiceUrls: ECPayAIOServiceUrls = {
   },
   // 下載信用卡撥款對帳資料檔
   FundingReconDetail: {
-    Production: `${prodBaseUrl}/CreditDetail/FundingReconDetail`,
+    Production: `${AioProdBaseUrl}/CreditDetail/FundingReconDetail`,
   },
   // 查詢信用卡單筆明細紀錄
   TradeV2: {
-    Production: `${prodBaseUrl}/CreditDetail/QueryTrade/V2`,
+    Production: `${AioProdBaseUrl}/CreditDetail/QueryTrade/V2`,
   },
   // 信用卡定期定額訂單作業
   CreditCardPeriod: {
-    Production: `${prodBaseUrl}/Cashier/CreditCardPeriodAction`,
-    Test: `${testBaseUrl}/Cashier/CreditCardPeriodAction`,
+    Production: `${AioProdCashierUrl}/CreditCardPeriodAction`,
+    Test: `${AioTestCashierUrl}/CreditCardPeriodAction`,
   },
   // 信用卡關帳、請退款
   Do: {
-    Production: `${prodBaseUrl}/CreditDetail/DoAction`,
+    Production: `${AioProdBaseUrl}/CreditDetail/DoAction`,
   },
   // TBD: 以下為發票相關功能
   InvoiceCancelDelayIssue: {
-    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/CancelDelayIssue',
-    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/CancelDelayIssue',
+    Production: `${B2CInvoiceProdUrl}/CancelDelayIssue`,
+    Test: `${B2CInvoiceTestUrl}/CancelDelayIssue`,
   },
   InvoiceInvalid: {
-    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/Invalid',
-    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/Invalid',
+    Production: `${B2CInvoiceProdUrl}/Invalid`,
+    Test: `${B2CInvoiceTestUrl}/Invalid`,
   },
   InvoiceVoidReIssue: {
-    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/VoidWithReIssue',
-    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/VoidWithReIssue',
+    Production: `${B2CInvoiceProdUrl}/VoidWithReIssue`,
+    Test: `${B2CInvoiceTestUrl}/VoidWithReIssue`,
   },
   InvoiceGetIssue: {
-    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/GetIssue',
-    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/GetIssue',
+    Production: `${B2CInvoiceProdUrl}/GetIssue`,
+    Test: `${B2CInvoiceTestUrl}/GetIssue`,
   },
   InvoiceNotify: {
-    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/InvoiceNotify',
-    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/InvoiceNotify',
+    Production: `${B2CInvoiceProdUrl}/InvoiceNotify`,
+    Test: `${B2CInvoiceTestUrl}/InvoiceNotify`,
   },
   InvoicePrint: {
-    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/InvoicePrint',
-    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/InvoicePrint',
+    Production: `${B2CInvoiceProdUrl}/InvoicePrint`,
+    Test: `${B2CInvoiceTestUrl}/InvoicePrint`,
   },
   InvoiceCheckBarcode: {
-    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/CheckBarcode',
-    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/CheckBarcode',
+    Production: `${B2CInvoiceProdUrl}/CheckBarcode`,
+    Test: `${B2CInvoiceTestUrl}/CheckBarcode`,
   },
   InvoiceCheckLoveCode: {
-    Production: 'https://einvoice.ecpay.com.tw/B2CInvoice/CheckLoveCode',
-    Test: 'https://einvoice-stage.ecpay.com.tw/B2CInvoice/CheckLoveCode',
+    Production: `${B2CInvoiceProdUrl}/CheckLoveCode`,
+    Test: `${B2CInvoiceTestUrl}/CheckLoveCode`,
   },
 };
 

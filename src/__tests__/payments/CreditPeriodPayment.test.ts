@@ -368,6 +368,6 @@ describe('CreditPeriodPayment: html', () => {
     //   InvoiceRemark: '測試發票備註',
     //   CustomerPhone: '0911111111',
     // });
-    console.log(html);
+    // console.log(html);
   });
 });

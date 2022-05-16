@@ -92,11 +92,15 @@ describe('CreditCardPeriodInfoQuery: Remote Query', () => {
     const query = merchant.createQuery(CreditCardPeriodInfoQuery, {
       MerchantTradeNo: QTN.CreditOneTime,
     });
-    const data = await query.read();
 
-    expect(data.MerchantTradeNo).toBeFalsy();
-    expect(data.TradeNo).toBeFalsy();
-    expect(data.RtnCode).toBe(10200047); // Cant not find the trade data.
+    try {
+      const data = await query.read();
+    } catch (err) {
+      expect(err.name).toBe('ECPayReturnedQueryError');
+      expect(err.code).toBe(10200047);
+      // err.response:
+      // {"ExecStatus":null,"MerchantID":"0","MerchantTradeNo":null,"TradeNo":null,"RtnCode":10200047,"PeriodType":null,"Frequency":0,"ExecTimes":0,"PeriodAmount":0,"amount":0,"gwsr":0,"process_date":null,"auth_code":null,"card4no":null,"card6no":null,"TotalSuccessTimes":0,"TotalSuccessAmount":0,"ExecLog":null}
+    }
 
     /* 
       // Example
@@ -127,59 +131,74 @@ describe('CreditCardPeriodInfoQuery: Remote Query', () => {
     const query = merchant.createQuery(CreditCardPeriodInfoQuery, {
       MerchantTradeNo: QTN.CreditDivide,
     });
-    const data = await query.read();
-    expect(data.MerchantTradeNo).toBeFalsy();
-    expect(data.TradeNo).toBeFalsy();
-    expect(data.RtnCode).toBe(10200047);
+
+    try {
+      const data = await query.read();
+    } catch (err) {
+      expect(err.name).toBe('ECPayReturnedQueryError');
+      expect(err.code).toBe(10200047);
+    }
   });
 
   test(`Query CreditFlexible trade: ${QTN.CreditFlexible}: Must return RtnCode 10200047 because trade data not found.`, async () => {
     const query = merchant.createQuery(CreditCardPeriodInfoQuery, {
       MerchantTradeNo: QTN.CreditFlexible,
     });
-    const data = await query.read();
-    expect(data.MerchantTradeNo).toBeFalsy();
-    expect(data.TradeNo).toBeFalsy();
-    expect(data.RtnCode).toBe(10200047);
+    try {
+      const data = await query.read();
+    } catch (err) {
+      expect(err.name).toBe('ECPayReturnedQueryError');
+      expect(err.code).toBe(10200047);
+    }
   });
 
   test(`Query ATM trade: ${QTN.ATM}: Must return RtnCode 10200047 because trade data not found.`, async () => {
     const query = merchant.createQuery(CreditCardPeriodInfoQuery, {
       MerchantTradeNo: QTN.ATM,
     });
-    const data = await query.read();
-    expect(data.MerchantTradeNo).toBeFalsy();
-    expect(data.TradeNo).toBeFalsy();
-    expect(data.RtnCode).toBe(10200047);
+    try {
+      const data = await query.read();
+    } catch (err) {
+      expect(err.name).toBe('ECPayReturnedQueryError');
+      expect(err.code).toBe(10200047);
+    }
   });
 
   test(`Query WebATM trade: ${QTN.WebATM}: Must return RtnCode 10200047 because trade data not found.`, async () => {
     const query = merchant.createQuery(CreditCardPeriodInfoQuery, {
       MerchantTradeNo: QTN.WebATM,
     });
-    const data = await query.read();
-    expect(data.MerchantTradeNo).toBeFalsy();
-    expect(data.TradeNo).toBeFalsy();
-    expect(data.RtnCode).toBe(10200047);
+
+    try {
+      const data = await query.read();
+    } catch (err) {
+      expect(err.name).toBe('ECPayReturnedQueryError');
+      expect(err.code).toBe(10200047);
+    }
   });
 
   test(`Query CVS trade: ${QTN.CVS}: Must return RtnCode 10200047 because trade data not found.`, async () => {
     const query = merchant.createQuery(CreditCardPeriodInfoQuery, {
       MerchantTradeNo: QTN.CVS,
     });
-    const data = await query.read();
-    expect(data.MerchantTradeNo).toBeFalsy();
-    expect(data.TradeNo).toBeFalsy();
-    expect(data.RtnCode).toBe(10200047);
+
+    try {
+      const data = await query.read();
+    } catch (err) {
+      expect(err.name).toBe('ECPayReturnedQueryError');
+      expect(err.code).toBe(10200047);
+    }
   });
 
   test(`Query BARCODE trade: ${QTN.BARCODE}: Must return RtnCode 10200047 because trade data not found.`, async () => {
     const query = merchant.createQuery(CreditCardPeriodInfoQuery, {
       MerchantTradeNo: QTN.BARCODE,
     });
-    const data = await query.read();
-    expect(data.MerchantTradeNo).toBeFalsy();
-    expect(data.TradeNo).toBeFalsy();
-    expect(data.RtnCode).toBe(10200047);
+    try {
+      const data = await query.read();
+    } catch (err) {
+      expect(err.name).toBe('ECPayReturnedQueryError');
+      expect(err.code).toBe(10200047);
+    }
   });
 });

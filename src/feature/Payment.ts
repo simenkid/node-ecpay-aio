@@ -5,6 +5,8 @@ import {
   getEncodedInvoice,
   parseIntegerFileds,
   PostRequest,
+  PlaceOrderRequest,
+  PlaceCachedOrderRequest,
 } from '../utils';
 import {
   ALLPaymentParamsSchema,
@@ -66,7 +68,7 @@ export class Payment<T> {
     this.params = { ...params };
   }
 
-  async checkout(invoice?: InvoiceParams): Promise<string> {
+  _prepareOrder(invoice?: InvoiceParams) {
     const { MerchantID, HashKey, HashIV } = this.merchant.config;
 
     if (invoice) {
@@ -89,34 +91,37 @@ export class Payment<T> {
 
     const CheckMacValue = generateCheckMacValue(order, HashKey, HashIV);
 
-    const postOrder = {
+    const postingOrder = {
       ...order,
       CheckMacValue,
     };
 
+    return postingOrder;
+  }
+
+  async checkout(invoice?: InvoiceParams): Promise<string> {
+    const postOrder = this._prepareOrder(invoice);
     return generateRedirectPostForm(this.apiUrl, postOrder);
   }
 
   async _placeOrder(invoice?: InvoiceParams): Promise<PaymentInfoData> {
-    const { MerchantID, HashKey, HashIV } = this.merchant.config;
-    const postParams = {
-      MerchantID,
-      ...this.params,
-    };
-
-    const CheckMacValue = generateCheckMacValue(postParams, HashKey, HashIV);
+    const postOrder = this._prepareOrder(invoice);
 
     try {
-      const _result = await PostRequest<T>({
+      const _result = await PlaceCachedOrderRequest({
         apiUrl: this.apiUrl,
-        params: {
-          ...postParams,
-          CheckMacValue,
-        },
-        responseEncoding: 'utf8',
+        params: postOrder,
       });
 
-      const result = parseIntegerFileds(_result, ['TradeAmt', 'RtnCode']);
+      // const result = parseIntegerFileds(_result, ['TradeAmt', 'RtnCode']);
+      console.log('#####: ', _result);
+
+      const r = await PlaceOrderRequest({
+        apiUrl: this.merchant.ecpayServiceUrls.Aio[this.merchant.mode]!, //  `https://payment-stage.ecpay.com.tw${_result}`,
+        params: _result,
+      });
+
+      console.log('******: ', r);
 
       return this.merchant
         .createQuery(PaymentInfoQuery, {
@@ -128,6 +133,10 @@ export class Payment<T> {
     }
   }
 }
+
+/*
+ * Specific Payment Classes
+ */
 
 export class CreditOneTimePayment extends Payment<CreditOneTimePaymentParams> {
   constructor(

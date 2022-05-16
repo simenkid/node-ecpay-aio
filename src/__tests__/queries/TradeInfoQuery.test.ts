@@ -428,10 +428,14 @@ describe('TradeInfoQuery: Remote Query Trades', () => {
     const query = merchant.createQuery(TradeInfoQuery, {
       MerchantTradeNo: 'nulltrade',
     });
-    const data = await query.read();
 
-    expect(data.MerchantTradeNo).toEqual('nulltrade');
-    expect(data.TradeStatus).toBe('10200047');
+    try {
+      const data = await query.read();
+    } catch (err) {
+      expect(err.name).toEqual('ECPayReturnedQueryError');
+      expect(err.code).toBe(10200047);
+    }
+
     /* 
       // Example
       {
@@ -466,7 +470,11 @@ describe('TradeInfoQuery: Remote Query Trades', () => {
         return result;
       };
 
-      const data = await query.read();
-    }).rejects.toThrowError('invalid CheckMacValue');
+      try {
+        const data = await query.read();
+      } catch (err) {
+        expect(err.name).toBe('CheckMacValueError');
+      }
+    });
   });
 });

@@ -1,7 +1,7 @@
 import { createHash } from 'crypto';
 import { URL, URLSearchParams } from 'url';
 import { Buffer } from 'buffer';
-import { request, createServer } from 'https';
+import { request, createServer, get } from 'https';
 import { IncomingMessage, ServerResponse, RequestListener } from 'http';
 
 import { decodeStream } from 'iconv-lite';
@@ -101,29 +101,9 @@ export function getEncodedInvoice(invoice?: InvoiceParams) {
   return _invoice as InvoiceParams;
 }
 
-export function getCurrentUnixTimeStampOffset(seconds?: number) {
+export function getCurrentUnixTimestampOffset(seconds?: number) {
   seconds = seconds || 0;
   return Math.floor(new Date().getTime() / 1000) + seconds;
-}
-
-export function getDateString(date?: Date) {
-  date = date || new Date();
-
-  return date.toLocaleDateString('zh-TW', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-}
-export function getDateTimeString(date?: Date) {
-  date = date || new Date();
-
-  return `${getDateString(date)} ${date.toLocaleTimeString('zh-TW', {
-    hour12: false,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  })}`;
 }
 
 export async function PostRequest<T>(config: {
@@ -194,6 +174,123 @@ export async function PostRequest<T>(config: {
   });
 }
 
+export async function PlaceCachedOrderRequest(config: {
+  apiUrl: string;
+  params: {};
+}): Promise<string> {
+  const { apiUrl, params } = config;
+  const _url = new URL(apiUrl);
+  const postData = getQueryStringFromParams(params, true);
+  const options = {
+    protocol: _url.protocol,
+    hostname: _url.hostname,
+    hash: _url.hash,
+    search: _url.search,
+    pathname: _url.pathname,
+    path: `${_url.pathname}${_url.search}`,
+    href: _url.toString(),
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Length': Buffer.byteLength(postData),
+    },
+  };
+
+  return new Promise<string>((resolve, reject) => {
+    const req = request(options, (rsp) => {
+      const decodedRsp = decodeStream('utf8');
+      rsp.pipe(decodedRsp);
+
+      let dataStr = '';
+      // rsp.setEncoding('binary'); // default is binary
+      decodedRsp.on('data', (chunk) => (dataStr += chunk));
+      decodedRsp.on('end', () => {
+        try {
+          resolve(parseCachedOrder(dataStr));
+        } catch (err) {
+          reject(err);
+        }
+      });
+      decodedRsp.on('error', (err) => {
+        reject(err);
+      });
+    });
+
+    req.on('error', (err) => {
+      reject(err);
+    });
+
+    req.write(postData);
+    req.end();
+  });
+}
+
+export async function PlaceOrderRequest(config: {
+  apiUrl: string;
+  params: {};
+}): Promise<string> {
+  const apiUrl = config.apiUrl;
+  // const _url = new URL(apiUrl);
+  // const postData = getQueryStringFromParams(config.params, false);
+  // const options = {
+  //   protocol: _url.protocol,
+  //   hostname: _url.hostname,
+  //   hash: _url.hash,
+  //   search: _url.search,
+  //   pathname: _url.pathname,
+  //   path: `${_url.pathname}${_url.search}`,
+  //   href: _url.toString(),
+  //   method: 'GET',
+  //   // headers: {
+  //   //   'Content-Type': 'application/x-www-form-urlencoded',
+  //   //   'Content-Length': Buffer.byteLength(postData),
+  //   // },
+  // };
+
+  //   https.get('https://encrypted.google.com/', (res) => {
+  //   console.log('statusCode:', res.statusCode);
+  //   console.log('headers:', res.headers);
+
+  //   res.on('data', (d) => {
+  //     process.stdout.write(d);
+  //   });
+
+  // }).on('error', (e) => {
+  //   console.error(e);
+  // });
+
+  return new Promise<string>((resolve, reject) => {
+    const req = get(apiUrl, (rsp) => {
+      console.log(apiUrl);
+      console.log('statusCode:', rsp.statusCode);
+      console.log('headers:', rsp.headers);
+
+      const decodedRsp = decodeStream('utf8');
+      rsp.pipe(decodedRsp);
+
+      let dataStr = '';
+      // rsp.setEncoding('binary'); // default is binary
+      decodedRsp.on('data', (chunk) => (dataStr += chunk));
+      decodedRsp.on('end', () => {
+        try {
+          resolve(dataStr);
+        } catch (err) {
+          reject(err);
+        }
+      });
+      decodedRsp.on('error', (err) => {
+        reject(err);
+      });
+    });
+
+    req.on('error', (err) => {
+      reject(err);
+    });
+
+    req.end();
+  });
+}
+
 export function getQueryStringFromParams(data: {}, sort?: boolean) {
   const _params = new URLSearchParams(data);
 
@@ -252,4 +349,14 @@ export function getCurrentTaipeiTimeString(config?: {
     : format === 'Date'
     ? `${year}/${month}/${day}`
     : `${year}${month}${day}${hour}${minute}${second}${ms}`;
+}
+
+export function parseCachedOrder(html: string) {
+  // const hidx = html.indexOf('?timeStamp=');
+  // const tidx = html.indexOf('">');
+  // const str = html.slice(hidx, tidx).replace(/&amp;/g, '&');
+  // return fromEntries(new URLSearchParams(str));
+  const hidx = html.indexOf('/Cashier');
+  const tidx = html.indexOf('">');
+  return html.slice(hidx, tidx).replace(/&amp;/g, '&');
 }

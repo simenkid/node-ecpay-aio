@@ -1,7 +1,8 @@
 import { Merchant } from './Merchant';
 import {
   generateCheckMacValue,
-  getCurrentUnixTimeStampOffset,
+  getCurrentUnixTimestampOffset,
+  parseIntegerFileds,
   PostRequest,
 } from '../utils';
 import {
@@ -15,6 +16,7 @@ import {
   DoActionParams,
   DoActionResponseData,
 } from '../types';
+import { ActionError, CheckMacValueError } from './Error';
 
 export class Action<T> {
   merchant: Merchant;
@@ -65,7 +67,7 @@ export class CreditCardPeriodAction extends Action<CreditCardPeriodActionParams>
     this.apiUrl = merchant.ecpayServiceUrls.CreditCardPeriod[merchant.mode]!;
     this._params = {
       ...this.params,
-      TimeStamp: getCurrentUnixTimeStampOffset(90),
+      TimeStamp: getCurrentUnixTimestampOffset(90),
       PlatformID: this.merchant.config.PlatformID,
     };
   }
@@ -74,12 +76,24 @@ export class CreditCardPeriodAction extends Action<CreditCardPeriodActionParams>
     const { HashKey, HashIV } = this.merchant.config;
 
     const data = await this._execute<CreditCardPeriodActionResponseData>();
+    const result: CreditCardPeriodActionResponseData = parseIntegerFileds(
+      data,
+      ['RtnCode']
+    );
     const computedCMV = generateCheckMacValue(data, HashKey, HashIV);
 
     if (data.CheckMacValue !== computedCMV)
-      throw new Error('Validation fails: invalid CheckMacValue.');
+      throw new CheckMacValueError(
+        `Check mac value of CreditCardPeriodAction response failed. MerchantTradeNo: ${this.params.MerchantTradeNo}, Action: ${this.params.Action}.`,
+        result
+      );
 
-    return data;
+    if (result.RtnCode !== 1) {
+      // 1: success, n: fails
+      throw new ActionError(result.RtnMsg, result.RtnCode, result);
+    }
+
+    return result;
   }
 }
 
@@ -98,6 +112,16 @@ export class DoAction extends Action<DoActionParams> {
   }
 
   async execute() {
-    return this._execute<DoActionResponseData>();
+    const _result = await this._execute<DoActionResponseData>();
+    const result: DoActionResponseData = parseIntegerFileds(_result, [
+      'RtnCode',
+    ]);
+
+    if (result.RtnCode !== 1) {
+      // 1: success, n: fails
+      throw new ActionError(result.RtnMsg, result.RtnCode, result);
+    }
+
+    return result;
   }
 }

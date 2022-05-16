@@ -32,6 +32,7 @@ describe('PaymentInfoQuery: Remote Query Async PaymentInfo of ATM, CVS and BARCO
     expect(data).toHaveProperty('TradeNo');
     expect(data).toHaveProperty('vAccount');
     expect(data).toHaveProperty('RtnCode');
+
     /*
       // Example
       {
@@ -151,8 +152,12 @@ describe('PaymentInfoQuery: Remote Query Async PaymentInfo of ATM, CVS and BARCO
         return result;
       };
 
-      const data = await query.read();
-    }).rejects.toThrowError('invalid CheckMacValue');
+      try {
+        const data = await query.read();
+      } catch (err) {
+        expect(err.name).toBe('CheckMacValueError');
+      }
+    });
   });
 });
 
@@ -163,44 +168,60 @@ describe('PaymentInfoQuery: Remote Query Sync PaymentInfo of CreditCard and WebA
     const query = merchant.createQuery(PaymentInfoQuery, {
       MerchantTradeNo: QTN.CreditOneTime,
     });
-    const data = await query.read();
-    expect(data.RtnCode).toBe(10200047);
-    expect(data.RtnMsg).toContain('Cant not find');
+
+    try {
+      const data = await query.read();
+    } catch (err) {
+      expect(err.name).toBe('ECPayReturnedQueryError');
+      expect(err.code).toBe(10200047);
+    }
   });
 
   test(`Query sync payment CreditDivide ${QTN.CreditDivide}: Must return RtnCode 10200047 because trade data not found.`, async () => {
     const query = merchant.createQuery(PaymentInfoQuery, {
       MerchantTradeNo: QTN.CreditDivide,
     });
-    const data = await query.read();
-    expect(data.RtnCode).toBe(10200047);
-    expect(data.RtnMsg).toContain('Cant not find');
+    try {
+      const data = await query.read();
+    } catch (err) {
+      expect(err.name).toBe('ECPayReturnedQueryError');
+      expect(err.code).toBe(10200047);
+    }
   });
 
   test(`Query sync payment CreditPeriod ${QTN.CreditPeriod}: Must return RtnCode 10200047 because trade data not found.`, async () => {
     const query = merchant.createQuery(PaymentInfoQuery, {
       MerchantTradeNo: QTN.CreditPeriod,
     });
-    const data = await query.read();
-    expect(data.RtnCode).toBe(10200047);
-    expect(data.RtnMsg).toContain('Cant not find');
+    try {
+      const data = await query.read();
+    } catch (err) {
+      expect(err.name).toBe('ECPayReturnedQueryError');
+      expect(err.code).toBe(10200047);
+    }
   });
 
   test(`Query sync payment CreditFlexible ${QTN.CreditFlexible}: Must return RtnCode 10200047 because trade data not found.`, async () => {
     const query = merchant.createQuery(PaymentInfoQuery, {
       MerchantTradeNo: QTN.CreditFlexible,
     });
-    const data = await query.read();
-    expect(data.RtnCode).toBe(10200047);
-    expect(data.RtnMsg).toContain('Cant not find');
+    try {
+      const data = await query.read();
+    } catch (err) {
+      expect(err.name).toBe('ECPayReturnedQueryError');
+      expect(err.code).toBe(10200047);
+    }
   });
 
   test(`Query sync payment WebATM ${QTN.WebATM}: Must return RtnCode 10200047 because trade data not found.`, async () => {
     const query = merchant.createQuery(PaymentInfoQuery, {
       MerchantTradeNo: QTN.WebATM,
     });
-    const data = await query.read();
-    expect(data.RtnCode).toBe(10200047);
-    expect(data.RtnMsg).toContain('Cant not find');
+    try {
+      const data = await query.read();
+    } catch (err) {
+      expect(err.name).toBe('ECPayReturnedQueryError');
+      expect(err.code).toBe(10200047);
+    }
   });
 });

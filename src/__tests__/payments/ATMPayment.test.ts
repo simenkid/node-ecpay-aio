@@ -91,7 +91,9 @@ describe('ATMPayment: html', () => {
 
   test('Checkout with ', async () => {
     const payment = merchant.createPayment(ATMPayment, baseParams, {
-      // ChooseSubPayment: 'FIRST',
+      ClientRedirectURL:
+        'https://payment-stage.ecpay.com.tw/PaymentRule/ATMPaymentInfo',
+      ChooseSubPayment: 'BOT',
       ExpireDate: 7,
     });
     const html = await payment.checkout();
@@ -107,6 +109,44 @@ describe('ATMPayment: html', () => {
     //   InvoiceRemark: '測試發票備註',
     //   CustomerPhone: '0911111111',
     // });
-    console.log(html);
+    // console.log(html);
   });
 });
+
+// describe('ATMPayment: placeOrder', () => {
+//   const merchant = new Merchant('Test', {
+//     MerchantID: '2000132',
+//     HashKey: '5294y06JbISpM5x9',
+//     HashIV: 'v77hoKGq4kWxNNIS',
+//     ReturnURL: 'https://api.test.com/our/hook',
+//   });
+
+//   const baseParams: BasePaymentParams = {
+//     MerchantTradeNo: `nea${getCurrentTaipeiTimeString({ format: 'Serial' })}`,
+//     MerchantTradeDate: getCurrentTaipeiTimeString(),
+//     TotalAmount: 500,
+//     TradeDesc: 'node-ecpay-aio testing order for ATMPayment',
+//     ItemName: 'test item name',
+//   };
+
+//   test('Placed Order with ', async () => {
+//     const payment = merchant.createPayment(ATMPayment, baseParams, {
+//       ExpireDate: 3,
+//     });
+
+//     const rsp = await payment.placeOrder({
+//       RelateNumber: 'rl-no-1',
+//       TaxType: '1',
+//       Donation: '0',
+//       Print: '0',
+//       InvoiceItemName: 'item1|item2',
+//       InvoiceItemCount: '2|5',
+//       InvoiceItemWord: '台|張',
+//       InvoiceItemPrice: '100|50',
+//       InvoiceRemark: '測試發票備註',
+//       CustomerPhone: '0911111111',
+//     });
+
+//     console.log(rsp);
+//   });
+// });

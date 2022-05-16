@@ -21,3 +21,5 @@ export {
 } from './feature/Query';
 
 export { CreditCardPeriodAction, DoAction } from './feature/Action';
+
+export { getCurrentTaipeiTimeString } from './utils';

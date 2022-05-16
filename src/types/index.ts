@@ -1,4 +1,6 @@
 export type ECPayAIOService =
+  | 'Aio'
+  | 'AioCashier'
   | 'AioCheckOut'
   | 'TradeInfo'
   | 'PaymentInfo'

@@ -1,7 +1,7 @@
 import { Merchant } from './Merchant';
 import {
   generateCheckMacValue,
-  getCurrentUnixTimeStampOffset,
+  getCurrentUnixTimestampOffset,
   parseIntegerFileds,
   PostRequest,
 } from '../utils';
@@ -23,6 +23,7 @@ import {
   TradeInfoData,
   TradeV2Data,
 } from '../types';
+import { CheckMacValueError, QueryError } from './Error';
 
 const QUERY_RESULT_BASE_INT_FIELDS = [
   'TradeAmt',
@@ -101,7 +102,7 @@ export class TradeInfoQuery extends Query<TradeInfoQueryParams> {
     this.apiUrl = merchant.ecpayServiceUrls.TradeInfo[merchant.mode]!;
     this._params = {
       ...this.params,
-      TimeStamp: getCurrentUnixTimeStampOffset(120),
+      TimeStamp: getCurrentUnixTimestampOffset(120),
       PlatformID: this.merchant.config.PlatformID,
     };
   }
@@ -110,15 +111,30 @@ export class TradeInfoQuery extends Query<TradeInfoQueryParams> {
     const { HashKey, HashIV } = this.merchant.config;
 
     const _data = await this._read<TradeInfoData>();
-    const computedCMV = generateCheckMacValue(_data, HashKey, HashIV);
-
-    if (_data.CheckMacValue !== computedCMV)
-      throw new Error('Validation fails: invalid CheckMacValue.');
-
-    const result = parseIntegerFileds(_data, [
+    const result: TradeInfoData = parseIntegerFileds(_data, [
       ...QUERY_ADDITIONAL_INT_FIELDS,
       ...QUERY_EXTRAINFO_INT_FIELDS,
     ]);
+    const computedCMV = generateCheckMacValue(_data, HashKey, HashIV);
+
+    if (result.CheckMacValue !== computedCMV)
+      throw new CheckMacValueError(
+        `Check mac value of TradeInfoQuery response failed. MerchantTradeNo: ${this.params.MerchantTradeNo}.`,
+        result
+      );
+
+    if (
+      result.TradeStatus !== '0' &&
+      result.TradeStatus !== '1' &&
+      result.TradeStatus !== '10200095'
+    ) {
+      throw new QueryError(
+        'Trade info query failed.',
+        parseInt(result.TradeStatus),
+        result
+      );
+    }
+
     return result;
   }
 }
@@ -133,7 +149,7 @@ export class PaymentInfoQuery extends Query<PaymentInfoQueryParams> {
     this.apiUrl = merchant.ecpayServiceUrls.PaymentInfo[merchant.mode]!;
     this._params = {
       ...this.params,
-      TimeStamp: getCurrentUnixTimeStampOffset(120),
+      TimeStamp: getCurrentUnixTimestampOffset(120),
       PlatformID: this.merchant.config.PlatformID,
     };
   }
@@ -145,7 +161,20 @@ export class PaymentInfoQuery extends Query<PaymentInfoQueryParams> {
     const computedCMV = generateCheckMacValue(data, HashKey, HashIV);
 
     if (data.CheckMacValue !== computedCMV)
-      throw new Error('Validation fails: invalid CheckMacValue.');
+      throw new CheckMacValueError(
+        `Check mac value of PaymentInfoQuery response failed. MerchantTradeNo: ${this.params.MerchantTradeNo}.`,
+        data
+      );
+
+    // Check if RtnCode is successful
+    if (data.PaymentType.startsWith('ATM') && data.RtnCode !== 2)
+      throw new QueryError(data.RtnMsg, data.RtnCode, data);
+    else if (
+      (data.PaymentType.startsWith('CVS') ||
+        data.PaymentType.startsWith('BARCODE')) &&
+      data.RtnCode !== 10100073
+    )
+      throw new QueryError(data.RtnMsg, data.RtnCode, data);
 
     return data;
   }
@@ -165,14 +194,25 @@ export class CreditCardPeriodInfoQuery extends Query<CreditCardPeriodInfoQueryPa
       merchant.ecpayServiceUrls.CreditCardPeriodInfo[merchant.mode]!;
     this._params = {
       ...this.params,
-      TimeStamp: getCurrentUnixTimeStampOffset(120),
+      TimeStamp: getCurrentUnixTimestampOffset(120),
       PlatformID: this.merchant.config.PlatformID,
     };
   }
 
   async read() {
     const _result = await this._read<CreditCardPeriodInfoData>();
-    const result = parseIntegerFileds(_result, QUERY_ADDITIONAL_INT_FIELDS);
+    const result: CreditCardPeriodInfoData = parseIntegerFileds(
+      _result,
+      QUERY_ADDITIONAL_INT_FIELDS
+    );
+
+    if (result.RtnCode !== 1)
+      throw new QueryError(
+        'Credit card period info query failed or first authorization for this order was rejected.',
+        result.RtnCode,
+        result
+      );
+
     if (Array.isArray(result.ExecLog)) {
       (result.ExecLog as {}[]).forEach((log, index) => {
         result.ExecLog[index] = parseIntegerFileds(
@@ -203,7 +243,14 @@ export class TradeV2Query extends Query<TradeV2QueryParams> {
   }
 
   async read() {
-    return this._read<TradeV2Data>();
+    const result = await this._read<TradeV2Data>();
+
+    if (!result.RtnValue) {
+      // RtnMsg: '' for success
+      throw new QueryError(result.RtnMsg, result.RtnValue as string, result);
+    }
+
+    return result;
   }
 }
 

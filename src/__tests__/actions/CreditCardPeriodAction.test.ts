@@ -59,13 +59,18 @@ describe('CreditCardPeriodAction: Remote Actions', () => {
       Action: 'Cancel',
     });
 
-    const data = await action.execute();
-    expect(data.MerchantTradeNo).toEqual(QTN.CreditPeriod);
-    expect(data).toHaveProperty('MerchantID');
-    expect(data).toHaveProperty('MerchantTradeNo');
-    expect(data).toHaveProperty('RtnCode');
-    expect(data).toHaveProperty('RtnMsg');
-
+    try {
+      const data = await action.execute();
+      expect(data.MerchantTradeNo).toEqual(QTN.CreditPeriod);
+      expect(data).toHaveProperty('MerchantID');
+      expect(data).toHaveProperty('MerchantTradeNo');
+      expect(data).toHaveProperty('RtnCode');
+      expect(data).toHaveProperty('RtnMsg');
+    } catch (err) {
+      expect(err.name).toBe('ECPayReturnedActionError');
+      expect(err.code).toBe(90100149);
+      expect(err.message).toBe('該訂單狀態為停用中');
+    }
     /* 
       // Example: Verify Error
       {
@@ -116,7 +121,11 @@ describe('CreditCardPeriodAction: Remote Actions', () => {
         return result;
       };
 
-      const data = await action.execute();
-    }).rejects.toThrowError('invalid CheckMacValue');
+      try {
+        const data = await action.execute();
+      } catch (err) {
+        expect(err.name).toBe('CheckMacValueError');
+      }
+    });
   });
 });

@@ -3,10 +3,9 @@ import {
   generateCheckMacValue,
   generateRedirectPostForm,
   getEncodedInvoice,
-  getCurrentUnixTimeStampOffset,
+  getCurrentUnixTimestampOffset,
   getQueryStringFromParams,
-  getDateString,
-  getDateTimeString,
+  getCurrentTaipeiTimeString,
 } from '../utils';
 
 describe('Check Mac Value Generation', () => {
@@ -183,22 +182,22 @@ describe('Encode Invoice', () => {
 
 describe('Unix Timestamp', () => {
   test('Offset with 0 second', () => {
-    const now = getCurrentUnixTimeStampOffset();
-    const latter = getCurrentUnixTimeStampOffset();
+    const now = getCurrentUnixTimestampOffset();
+    const latter = getCurrentUnixTimestampOffset();
 
     expect(now).toEqual(latter);
   });
 
   test('Offset with 1 second', () => {
-    const now = getCurrentUnixTimeStampOffset();
-    const latter = getCurrentUnixTimeStampOffset(1);
+    const now = getCurrentUnixTimestampOffset();
+    const latter = getCurrentUnixTimestampOffset(1);
 
     expect(now).toEqual(latter - 1);
   });
 
   test('Offset with 10 second', () => {
-    const now = getCurrentUnixTimeStampOffset();
-    const latter = getCurrentUnixTimeStampOffset(10);
+    const now = getCurrentUnixTimestampOffset();
+    const latter = getCurrentUnixTimestampOffset(10);
 
     expect(now).toEqual(latter - 10);
   });
@@ -220,31 +219,27 @@ describe('Query String', () => {
   });
 });
 
-// describe('getDateString', () => {
-//   test('Get current date string', () => {
-//     const dateYMD = getDateString().split('/');
-//     const currentDateYMD = new Date()
-//       .toLocaleDateString('zh-TW', {
-//         year: 'numeric',
-//         month: '2-digit',
-//         day: '2-digit',
-//       })
-//       .split('/');
+describe('getCurrentTaipeiTimeString', () => {
+  const timestamp = 1652577669234;
 
-//     expect(dateYMD).toEqual(currentDateYMD);
-//   });
+  test('Get datetime string', () => {
+    const tpeDatetime = getCurrentTaipeiTimeString({ timestamp });
+    expect(tpeDatetime).toEqual('2022/05/15 09:21:38');
+  });
 
-//   test('Get certain date string', () => {
-//     const dateYMD = getDateString(new Date(Date.UTC(2022, 3, 25, 8)));
-//     expect(dateYMD).toEqual('2022/04/25');
-//   });
-// });
+  test('Get date string', () => {
+    const tpeDatetime = getCurrentTaipeiTimeString({
+      timestamp,
+      format: 'Date',
+    });
+    expect(tpeDatetime).toEqual('2022/05/15');
+  });
 
-// describe('getDateTimeString', () => {
-//   test('Get current datetime string', () => {
-//     const datetimeString = getDateTimeString(
-//       new Date(Date.UTC(2022, 3, 25, 8, 12, 20))
-//     );
-//     expect(datetimeString).toEqual('2022/04/25 16:12:20');
-//   });
-// });
+  test('Get serial time string', () => {
+    const tpeDatetime = getCurrentTaipeiTimeString({
+      timestamp,
+      format: 'Serial',
+    });
+    expect(tpeDatetime).toEqual('20220515092138034');
+  });
+});
