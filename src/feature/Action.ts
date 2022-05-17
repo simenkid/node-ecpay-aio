@@ -83,7 +83,7 @@ export class CreditCardPeriodAction extends Action<CreditCardPeriodActionParams>
 
     if (!isValidReceivedCheckMacValue(data, HashKey, HashIV))
       throw new CheckMacValueError(
-        `Check mac value of CreditCardPeriodAction response failed. MerchantTradeNo: ${this.params.MerchantTradeNo}, Action: ${this.params.Action}.`,
+        `Invalid CheckMacValue in CreditCardPeriodAction. MerchantTradeNo: ${this.params.MerchantTradeNo}, Action: ${this.params.Action}.`,
         result
       );
 

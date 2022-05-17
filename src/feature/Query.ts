@@ -119,7 +119,7 @@ export class TradeInfoQuery extends Query<TradeInfoQueryParams> {
 
     if (!isValidReceivedCheckMacValue(_data, HashKey, HashIV))
       throw new CheckMacValueError(
-        `Check mac value of TradeInfoQuery response failed. MerchantTradeNo: ${this.params.MerchantTradeNo}.`,
+        `Invalid CheckMacValue in TradeInfoQuery response. MerchantTradeNo: ${this.params.MerchantTradeNo}.`,
         result
       );
 
@@ -161,7 +161,7 @@ export class PaymentInfoQuery extends Query<PaymentInfoQueryParams> {
 
     if (!isValidReceivedCheckMacValue(data, HashKey, HashIV))
       throw new CheckMacValueError(
-        `Check mac value of PaymentInfoQuery response failed. MerchantTradeNo: ${this.params.MerchantTradeNo}.`,
+        `Invalid CheckMacValue in PaymentInfoQuery response. MerchantTradeNo: ${this.params.MerchantTradeNo}.`,
         data
       );
 

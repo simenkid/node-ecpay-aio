@@ -309,7 +309,7 @@ export function isValidReceivedCheckMacValue(
   hashIV: string
 ) {
   if (!data.CheckMacValue)
-    throw new CheckMacValueError('No CheckMacValue field within data', data);
+    throw new CheckMacValueError('No CheckMacValue field within data.', data);
 
   if (typeof data.CheckMacValue !== 'string') return false;
 
