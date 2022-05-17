@@ -57,7 +57,7 @@ npm install --save node-ecpay-aio
 
 - 使用前建議先讀過官方文件與本模組 [User Guide](https://github.com/simenkid/node-ecpay-aio/wiki)
 - 歡迎發 Issue，但我不一定有時間修
-- 更歡迎發 PR（請帶測試，因本模組已在生產環境中使用）或共同維護
+- 更歡迎發 PR（帶測試佳）或共同維護
 - 本模組基本穩定，但有些功能綠界沒有提供 Testing stage，自動化測試跑不到那些 cases。
 
 <br />
