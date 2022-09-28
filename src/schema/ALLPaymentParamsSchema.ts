@@ -63,7 +63,7 @@ const ALLPaymentParamsSchema = yup
       ),
     ExpireDate: yup.number().integer().strict().min(1).max(60),
     PaymentInfoURL: yup.string().max(200).url(),
-    ClientRedirectURL: yup.string().max(200).url(),
+    ClientRedirectURL: yup.string().max(200),
     StoreExpireDate: yup.number().integer().strict().min(1).max(30),
     Desc_1: yup.string().strict().max(20),
     Desc_2: yup.string().strict().max(20),

@@ -6,10 +6,10 @@ const MerchantConfigSchema = yup.object().shape({
   HashIV: yup.string().strict().required(),
   ReturnURL: yup.string().max(200).required().url(),
   PlatformID: yup.string().max(10).strict(),
-  OrderResultURL: yup.string().max(200).url(),
-  ClientBackURL: yup.string().max(200).url(),
+  OrderResultURL: yup.string().max(200),
+  ClientBackURL: yup.string().max(200),
   PeriodReturnURL: yup.string().max(200).url(),
-  ClientRedirectURL: yup.string().max(200).url(),
+  ClientRedirectURL: yup.string().max(200),
   PaymentInfoURL: yup.string().max(200).url(),
 });
 

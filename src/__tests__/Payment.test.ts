@@ -26,7 +26,7 @@ describe('Payment: Check Mandatory Base Params', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
           ItemName: 'test item name',
@@ -41,7 +41,7 @@ describe('Payment: Check Mandatory Base Params', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TradeDesc: 'test trade description',
           ItemName: 'test item name',
@@ -56,7 +56,7 @@ describe('Payment: Check Mandatory Base Params', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           ItemName: 'test item name',
@@ -71,7 +71,7 @@ describe('Payment: Check Mandatory Base Params', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -106,7 +106,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: 3,
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -120,7 +120,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -136,7 +136,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 'not a number',
           TradeDesc: 'test trade description',
@@ -152,7 +152,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 1,
@@ -168,7 +168,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -184,7 +184,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -201,7 +201,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -213,12 +213,12 @@ describe('Payment: Check Base Params Types', () => {
     }).toThrowError('must be a `string` type');
   });
 
-  test('Must throw when ClientBackURL is not an url', () => {
+  test('Not throw when ClientBackURL is not an url', () => {
     expect(() => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -227,7 +227,7 @@ describe('Payment: Check Base Params Types', () => {
         },
         {}
       );
-    }).toThrowError('must be a valid URL');
+    }).not.toThrowError();
   });
 
   test('Must throw when ItemURL is not an url', () => {
@@ -235,7 +235,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -247,12 +247,12 @@ describe('Payment: Check Base Params Types', () => {
     }).toThrowError('must be a valid URL');
   });
 
-  test('Must throw when OrderResultURL is not an url', () => {
+  test('Not throw when OrderResultURL is not an url', () => {
     expect(() => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -261,7 +261,7 @@ describe('Payment: Check Base Params Types', () => {
         },
         {}
       );
-    }).toThrowError('must be a valid URL');
+    }).not.toThrowError();
   });
 
   test('Must throw when Remark is not a string', () => {
@@ -269,7 +269,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -286,7 +286,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -303,7 +303,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -320,7 +320,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -337,7 +337,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
@@ -354,7 +354,7 @@ describe('Payment: Check Base Params Types', () => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
         {
-          MerchantTradeNo: 'test-trade-no',
+          MerchantTradeNo: 'testtradeno',
           MerchantTradeDate: '2021/04/17 10:55:26',
           TotalAmount: 1000,
           TradeDesc: 'test trade description',

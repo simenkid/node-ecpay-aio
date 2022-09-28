@@ -62,6 +62,13 @@ npm install --save node-ecpay-aio
 
 <br />
 
+## Updates
+
+- v0.2.2 (2022/09/29)
+  - 對 `OrderResultURL`, `ClientBackURL`, `ClientRedirectURL` 三個參數的驗證從必為 URL 改為不一定要為 URL，因在手機使用的情況可能會使用 deep link 重導。故現在開發者要自行保證 `OrderResultURL`, `ClientBackURL`, `ClientRedirectURL` 三個參數的格式。
+
+<br />
+
 ## License
 
 Licensed under [MIT](https://github.com/simenkid/node-ecpay-aio/blob/main/LICENSE).

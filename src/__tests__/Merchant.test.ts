@@ -108,32 +108,32 @@ describe('Merchant: Check Config Property Types', () => {
     }).toThrowError('must be a `string` type');
   });
 
-  test('Must throw when OrderResultURL is not an url', () => {
+  test('Not throw when OrderResultURL is not an url', () => {
     expect(() => {
       const merchant = new Merchant('Test', {
         ...TEST_MERCHANT_CONFIG,
-        PlatformID: 'test-platform-id',
+        PlatformID: 'testplfid',
         OrderResultURL: 'ht://not/a/valid/url',
       });
-    }).toThrowError('must be a valid URL');
+    }).not.toThrowError();
   });
 
-  test('Must throw when ClientBackURL is not an url', () => {
+  test('Not throw when ClientBackURL is not an url', () => {
     expect(() => {
       const merchant = new Merchant('Test', {
         ...TEST_MERCHANT_CONFIG,
-        PlatformID: 'test-platform-id',
+        PlatformID: 'testplfid',
         OrderResultURL: 'https://api.test.com/our/order/hook',
         ClientBackURL: 'ht://not/a/valid/url',
       });
-    }).toThrowError('must be a valid URL');
+    }).not.toThrowError();
   });
 
   test('Must throw when PeriodReturnURL is not an url', () => {
     expect(() => {
       const merchant = new Merchant('Test', {
         ...TEST_MERCHANT_CONFIG,
-        PlatformID: 'test-platform-id',
+        PlatformID: 'testplfid',
         PeriodReturnURL: 'ht://not/a/valid/url',
       });
     }).toThrowError('must be a valid URL');

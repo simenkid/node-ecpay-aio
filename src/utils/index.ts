@@ -317,7 +317,7 @@ export function isValidReceivedCheckMacValue(
   return data.CheckMacValue === computedCMV;
 }
 
-interface TimeDetail {
+export interface TimeDetail {
   year: string;
   month: string;
   day: string;

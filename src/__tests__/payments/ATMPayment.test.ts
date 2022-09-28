@@ -30,19 +30,19 @@ describe('ATMPayment: Check Params Types', () => {
     }).toThrowError('must be a valid URL');
   });
 
-  test('Must throw when ClientRedirectURL is not a valid url', () => {
+  test('Not throw when ClientRedirectURL is not a valid url', () => {
     expect(() => {
       const payment = merchant.createPayment(ATMPayment, baseParams, {
         ClientRedirectURL: 'htp://not/valid/url',
       });
-    }).toThrowError('must be a valid URL');
+    }).not.toThrowError();
   });
 
-  test('Must throw when merchant.config.ClientRedirectURL is not a valid url', () => {
+  test('Not throw when merchant.config.ClientRedirectURL is not a valid url', () => {
     expect(() => {
       merchant.config.ClientRedirectURL = 'htp://not/valid/url';
       const payment = merchant.createPayment(ATMPayment, baseParams, {});
-    }).toThrowError('must be a valid URL');
+    }).not.toThrowError();
   });
 
   test('Must throw when merchant.config.PaymentInfoURL is not a valid url', () => {
