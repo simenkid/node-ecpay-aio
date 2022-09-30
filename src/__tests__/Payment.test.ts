@@ -179,7 +179,7 @@ describe('Payment: Check Base Params Types', () => {
     }).toThrowError('must be a `string` type');
   });
 
-  test('Must throw when ReturnURL is not an url', () => {
+  test('Not throw when ReturnURL has valid url scheme', () => {
     expect(() => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
@@ -189,11 +189,28 @@ describe('Payment: Check Base Params Types', () => {
           TotalAmount: 1000,
           TradeDesc: 'test trade description',
           ItemName: 'test item name',
-          ReturnURL: 'ht://not/a/valid/url',
+          ReturnURL: 'ht//not/a/valid/url',
         },
         {}
       );
-    }).toThrowError('must be a valid URL');
+    }).not.toThrowError();
+  });
+
+  test('Not throw when ReturnURL is localhost', () => {
+    expect(() => {
+      const payment = merchant.createPayment(
+        CreditOneTimePayment,
+        {
+          MerchantTradeNo: 'testtradeno',
+          MerchantTradeDate: '2021/04/17 10:55:26',
+          TotalAmount: 1000,
+          TradeDesc: 'test trade description',
+          ItemName: 'test item name',
+          ReturnURL: 'http://localhost:3000/test',
+        },
+        {}
+      );
+    }).not.toThrowError();
   });
 
   test('Must throw when StoreID is not a string', () => {
@@ -230,7 +247,7 @@ describe('Payment: Check Base Params Types', () => {
     }).not.toThrowError();
   });
 
-  test('Must throw when ItemURL is not an url', () => {
+  test('Not throw when ItemURL has a valid url scheme', () => {
     expect(() => {
       const payment = merchant.createPayment(
         CreditOneTimePayment,
@@ -244,7 +261,7 @@ describe('Payment: Check Base Params Types', () => {
         },
         {}
       );
-    }).toThrowError('must be a valid URL');
+    }).not.toThrowError();
   });
 
   test('Not throw when OrderResultURL is not an url', () => {

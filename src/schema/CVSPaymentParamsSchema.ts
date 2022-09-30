@@ -6,7 +6,10 @@ const CVSPaymentParamsSchema = yup.object().shape({
     .strict()
     .oneOf(['CVS', 'OK', 'FAMILY', 'HILIFE', 'IBON']),
   StoreExpireDate: yup.number().integer().strict().min(1).max(43200),
-  PaymentInfoURL: yup.string().max(200).url(),
+  PaymentInfoURL: yup
+    .string()
+    .max(200)
+    .matches(/^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/),
   ClientRedirectURL: yup.string().max(200),
   Desc_1: yup.string().strict().max(20),
   Desc_2: yup.string().strict().max(20),

@@ -1,8 +1,12 @@
 import * as yup from 'yup';
 
 const ServiceUrlSchema = yup.object().shape({
-  Production: yup.string().url(),
-  Test: yup.string().url(),
+  Production: yup
+    .string()
+    .matches(/^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/),
+  Test: yup
+    .string()
+    .matches(/^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/),
 });
 
 export default ServiceUrlSchema;

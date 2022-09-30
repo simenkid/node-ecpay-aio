@@ -129,7 +129,7 @@ describe('CreditPeriodPayment: Check Params Types', () => {
     }).toThrowError('must be a `number` type');
   });
 
-  test('Must throw when PeriodReturnURL is not a valid url', () => {
+  test('Not throw when PeriodReturnURL has a valid url scheme', () => {
     expect(() => {
       const _params = { ...params, PeriodReturnURL: 'htp://not/valid' };
       const payment = merchant.createPayment(
@@ -137,7 +137,7 @@ describe('CreditPeriodPayment: Check Params Types', () => {
         baseParams,
         _params
       );
-    }).toThrowError('must be a valid URL');
+    }).not.toThrowError();
   });
 });
 

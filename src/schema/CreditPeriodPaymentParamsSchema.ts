@@ -39,7 +39,10 @@ const CreditPeriodPaymentParamsSchema = yup.object().shape({
       is: 'Y',
       then: (schema) => schema.max(9),
     }),
-  PeriodReturnURL: yup.string().max(200).url(),
+  PeriodReturnURL: yup
+    .string()
+    .max(200)
+    .matches(/^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/),
 });
 
 export default CreditPeriodPaymentParamsSchema;

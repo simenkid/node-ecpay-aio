@@ -90,13 +90,13 @@ describe('Merchant: Check Config Property Types', () => {
     }).toThrowError('must be a `string` type');
   });
 
-  test('Must throw when ReturnURL is not an url', () => {
+  test('Not throw when ReturnURL has a valid url scheme', () => {
     expect(() => {
       const merchant = new Merchant('Test', {
         ...TEST_MERCHANT_CONFIG,
         ReturnURL: 'htps://not/a/valid/url',
       });
-    }).toThrowError('must be a valid URL');
+    }).not.toThrowError();
   });
 
   test('Must throw when PlatformID is not a string', () => {
@@ -129,19 +129,19 @@ describe('Merchant: Check Config Property Types', () => {
     }).not.toThrowError();
   });
 
-  test('Must throw when PeriodReturnURL is not an url', () => {
+  test('Not throw when PeriodReturnURL has a valid url scheme', () => {
     expect(() => {
       const merchant = new Merchant('Test', {
         ...TEST_MERCHANT_CONFIG,
         PlatformID: 'testplfid',
         PeriodReturnURL: 'ht://not/a/valid/url',
       });
-    }).toThrowError('must be a valid URL');
+    }).not.toThrowError();
   });
 });
 
 describe('Merchant: Check EcpayServiceUrls format', () => {
-  test('Must throw when Production service url is not an url', () => {
+  test('Not throw when Production service url has a valid url scheme', () => {
     expect(() => {
       const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG, {
         AioCheckOut: {
@@ -149,10 +149,10 @@ describe('Merchant: Check EcpayServiceUrls format', () => {
           Test: 'https://api.test.com/ecpay/test',
         },
       });
-    }).toThrowError('must be a valid URL');
+    }).not.toThrowError();
   });
 
-  test('Must throw when Test service url is not an url', () => {
+  test('Not throw when Test service url has a valid url scheme', () => {
     expect(() => {
       const merchant = new Merchant('Test', TEST_MERCHANT_CONFIG, {
         AioCheckOut: {
@@ -160,7 +160,7 @@ describe('Merchant: Check EcpayServiceUrls format', () => {
           Production: 'https://api.test.com/ecpay/test',
         },
       });
-    }).toThrowError('must be a valid URL');
+    }).not.toThrowError();
   });
 });
 

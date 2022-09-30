@@ -47,7 +47,10 @@ const _CreditPeriodPaymentParamsSchema = yup.object().shape({
       is: 'Y',
       then: (schema) => schema.max(9),
     }),
-  PeriodReturnURL: yup.string().max(200).url(),
+  PeriodReturnURL: yup
+    .string()
+    .max(200)
+    .matches(/^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/),
 });
 
 const ALLPaymentParamsSchema = yup
@@ -62,7 +65,10 @@ const ALLPaymentParamsSchema = yup
           .oneOf(['Credit', 'WebATM', 'ATM', 'CVS', 'BARCODE', 'AndroidPay'])
       ),
     ExpireDate: yup.number().integer().strict().min(1).max(60),
-    PaymentInfoURL: yup.string().max(200).url(),
+    PaymentInfoURL: yup
+      .string()
+      .max(200)
+      .matches(/^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/),
     ClientRedirectURL: yup.string().max(200),
     StoreExpireDate: yup.number().integer().strict().min(1).max(30),
     Desc_1: yup.string().strict().max(20),

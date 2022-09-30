@@ -16,10 +16,16 @@ const BasePaymentParamsSchema = yup.object().shape({
   TotalAmount: yup.number().integer().strict().required(),
   TradeDesc: yup.string().strict().max(200).required(),
   ItemName: yup.string().strict().max(400).required(),
-  ReturnURL: yup.string().max(200).url(),
+  ReturnURL: yup
+    .string()
+    .max(200)
+    .matches(/^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/),
   StoreID: yup.string().max(20).strict(),
   ClientBackURL: yup.string().max(200),
-  ItemURL: yup.string().max(200).url(),
+  ItemURL: yup
+    .string()
+    .max(200)
+    .matches(/^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/),
   Remark: yup.string().max(100).strict(),
   OrderResultURL: yup.string().max(200),
   NeedExtraPaidInfo: yup.string().oneOf(['Y', 'N']),

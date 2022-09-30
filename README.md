@@ -66,8 +66,9 @@ npm install --save node-ecpay-aio
 
 - v0.2.2 (2022/09/29)
   - 對 `OrderResultURL`, `ClientBackURL`, `ClientRedirectURL` 三個參數的驗證從必為 URL 改為不一定要為 URL，因在手機使用的情況可能會使用 deep link 重導。故現在開發者要自行保證 `OrderResultURL`, `ClientBackURL`, `ClientRedirectURL` 三個參數的格式。
-
-<br />
+- v0.2.3 (2022/09/30)
+  - 對 URL 的驗證改為符合 IETF RFC3986 的格式 - `ReturnURL`, `PeriodReturnURL`, `PaymentInfoURL` 可以接受 http://localhost - v0.2.3 起的驗證不會保證你是否使用 `https` 開頭的網址，故生產時，請開發者要自行保證網址的合法性
+    <br />
 
 ## License
 
